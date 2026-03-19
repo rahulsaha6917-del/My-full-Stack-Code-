@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bongo Basket - Choose Account</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* Reset & Base */
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Poppins',sans-serif;
+}
+
+/* Body & background */
+body{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  background: linear-gradient(135deg,#667eea,#764ba2);
+}
+
+/* Header */
+header{
+  width:100%;
+  padding:40px 0;
+  text-align:center;
+  color:white;
+  font-size:40px;
+  font-weight:700;
+  letter-spacing:1px;
+  background: rgba(0,0,0,0.15);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+  backdrop-filter: blur(5px);
+  border-bottom-left-radius:20px;
+  border-bottom-right-radius:20px;
+  margin-bottom:50px;
+}
+
+/* Container card */
+.container{
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(15px);
+  padding:50px 30px;
+  border-radius:25px;
+  text-align:center;
+  width:100%;
+  max-width:400px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.container:hover{
+  transform: translateY(-5px);
+  box-shadow: 0 25px 60px rgba(0,0,0,0.35);
+}
+
+h1{
+  margin-bottom:15px;
+  color:white;
+  font-size:32px;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+}
+
+p{
+  margin-bottom:30px;
+  color:white;
+  font-size:16px;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+/* Buttons */
+button{
+  width:100%;
+  padding:16px;
+  margin:10px 0;
+  border:none;
+  border-radius:12px;
+  font-size:16px;
+  font-weight:600;
+  cursor:pointer;
+  color:white;
+  background: linear-gradient(90deg,#ff758c,#ff7eb3);
+  transition:0.3s;
+}
+button:hover{
+  background: linear-gradient(90deg,#ff7eb3,#ff758c);
+  transform: translateY(-2px);
+}
+
+/* Responsive */
+@media(max-width:480px){
+  .container{
+    margin:20px;
+    padding:40px 20px;
+  }
+  header{
+    font-size:32px;
+    padding:30px 0;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Page Header -->
+<header>Bongo Basket</header>
+
+<!-- Account Selection Card -->
+<div class="container">
+  <h1>Welcome!</h1>
+  <p>Select your account type to register</p>
+  <button onclick="registerRole('CUSTOMER')">Register as Customer</button>
+  <button onclick="registerRole('ADMIN')">Register as Admin</button>
+</div>
+
+<script>
+function registerRole(role){
+  localStorage.setItem("selectedRole", role);
+  window.location.href="register.html";
+}
+</script>
+
+</body>
+</html>

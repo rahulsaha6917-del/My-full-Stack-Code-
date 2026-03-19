@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Bongo Basket | Order History</title>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<!-- jsPDF Library for download -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+:root{
+  --primary:#6366f1;
+  --accent:#22c55e;
+  --success:#22c55e;
+  --warning:#f59e0b;
+  --danger:#ef4444;
+  --bg:#f1f5f9;
+  --card-bg:#ffffff;
+  --sidebar-bg:linear-gradient(to bottom,#6366f1,#22c55e);
+}
+
+/* Reset */
+*{ margin:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
+
+/* Body Layout */
+body{
+  display:flex;
+  background:var(--bg);
+  min-height:100vh;
+}
+
+/* SIDEBAR */
+.sidebar{
+  width:250px;
+  background:var(--sidebar-bg);
+  color:white;
+  display:flex;
+  flex-direction:column;
+  padding:30px 20px;
+  border-radius:0 15px 15px 0;
+  box-shadow:0 0 20px rgba(0,0,0,0.2);
+}
+
+.sidebar h2{
+  margin-bottom:30px;
+  font-size:24px;
+  text-align:center;
+}
+
+.sidebar .nav-btn{
+  background:rgba(255,255,255,0.2);
+  border:none;
+  padding:12px;
+  border-radius:10px;
+  width:100%;
+  color:white;
+  font-weight:600;
+  margin-bottom:12px;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.sidebar .nav-btn:hover{
+  background:rgba(255,255,255,0.4);
+}
+
+/* MAIN CONTENT */
+.main-content{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+}
+
+/* HEADER */
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:20px 30px;
+  background:linear-gradient(to right,#6366f1,#22c55e);
+  color:white;
+  border-radius:0 0 15px 15px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+.header .user-info{
+  font-weight:600;
+}
+
+.header .header-buttons button{
+  margin-left:10px;
+  padding:8px 14px;
+  border:none;
+  border-radius:8px;
+  font-weight:600;
+  cursor:pointer;
+  color:white;
+  transition:0.3s;
+}
+
+.header .shop-btn{ background:#3b82f6; }
+.header .shop-btn:hover{ background:#2563eb; }
+
+.header .payment-btn{ background:#22c55e; }
+.header .payment-btn:hover{ background:#16a34a; }
+
+.header .logout-btn{ background:#ef4444; }
+.header .logout-btn:hover{ background:#dc2626; }
+
+/* ORDERS */
+.container{
+  padding:30px;
+}
+
+/* CARD */
+.card{
+  display:flex;
+  gap:20px;
+  background:var(--card-bg);
+  margin-bottom:20px;
+  padding:20px;
+  border-radius:15px;
+  box-shadow:0 6px 15px rgba(0,0,0,0.08);
+  flex-wrap:wrap;
+  transition:0.3s;
+}
+
+.card:hover{ transform:translateY(-5px); }
+
+.card img{
+  width:120px;
+  height:120px;
+  object-fit:cover;
+  border-radius:10px;
+}
+
+.details{
+  flex:1;
+}
+
+.price{
+  font-weight:bold;
+  color:var(--primary);
+  font-size:18px;
+  margin:5px 0;
+}
+
+.status{
+  display:inline-block;
+  padding:5px 10px;
+  border-radius:6px;
+  font-size:12px;
+  margin-top:8px;
+}
+
+.delivered{background:var(--success);color:white;}
+.pending{background:var(--warning);color:white;}
+.cancelled{background:var(--danger);color:white;}
+
+.empty{
+  text-align:center;
+  padding:50px;
+  color:#555;
+  font-size:18px;
+}
+
+/* Bill Modal */
+.modal{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.5);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:999;
+}
+
+.modal-content{
+  background:white;
+  color:#000;
+  padding:25px;
+  border-radius:15px;
+  width:400px;
+  max-height:80%;
+  overflow-y:auto;
+  position:relative;
+}
+
+.modal-content h3{
+  text-align:center;
+  margin-bottom:15px;
+}
+
+.close-btn{
+  position:absolute;
+  top:10px;
+  right:15px;
+  font-size:18px;
+  cursor:pointer;
+  background:none;
+  border:none;
+  color:#ef4444;
+}
+
+.download-btn{
+  display:block;
+  width:100%;
+  padding:10px;
+  margin-top:15px;
+  background:var(--primary);
+  color:white;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.download-btn:hover{ background:#4f46e5; }
+
+/* Responsive */
+@media(max-width:900px){
+  body{
+    flex-direction:column;
+  }
+  .sidebar{
+    width:100%;
+    border-radius:0 0 15px 15px;
+    flex-direction:row;
+    justify-content:space-around;
+  }
+  .main-content{
+    padding:20px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <h2>BONGO BASKET</h2>
+  <button class="nav-btn" onclick="window.location.href='shop.html'">🏠 Dashboard</button>
+  <button class="nav-btn" onclick="window.location.href='payment.html'">Go to Payment 💳</button>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main-content">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="user-info">
+      Welcome, <b id="user"></b>
+    </div>
+    <div class="header-buttons">
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <!-- ORDERS -->
+  <div class="container">
+    <h2>Your Orders</h2>
+    <div id="orders"></div>
+  </div>
+</div>
+
+<!-- Bill Modal -->
+<div class="modal" id="billModal">
+  <div class="modal-content" id="billContent">
+    <button class="close-btn" onclick="closeModal()">×</button>
+    <h3>Order Bill</h3>
+    <div id="billDetails"></div>
+    <button class="download-btn" onclick="downloadBill()">Download PDF</button>
+  </div>
+</div>
+
+<script>
+const API = " https://my-full-stack-ae3l.onrender.com/api";
+const username = localStorage.getItem("username");
+let currentBillData = null;
+
+if(!username){ window.location = "login.html"; }
+
+document.getElementById("user").innerText = username;
+
+async function loadOrders(){
+  try{
+    const res = await fetch(API + "/orders?username=" + username);
+    const data = await res.json();
+    const products = data.products;
+
+    if(!products || products.length === 0){
+      document.getElementById("orders").innerHTML =
+        `<div class="empty">No Orders Found 😔</div>`;
+      return;
+    }
+
+    document.getElementById("orders").innerHTML = products.map(p => `
+      <div class="card">
+        <img src="${p.image_url || 'https://via.placeholder.com/120'}">
+        <div class="details">
+          <h3>${p.name}</h3>
+          <p>${p.description || ''}</p>
+          <p>Quantity: ${p.quantity}</p>
+          <p class="price">₹${p.total_price}</p>
+          <p>Order ID: ${p.order_id}</p>
+          <p>Date: ${p.order_date}</p>
+          <span class="status delivered">Delivered</span>
+          <button class="nav-btn" onclick='showBill(${JSON.stringify(p)})'>Show Bill</button>
+        </div>
+      </div>
+    `).join("");
+
+  } catch(e){
+    console.error(e);
+    document.getElementById("orders").innerHTML =
+      `<div class="empty">Error loading orders ❌</div>`;
+  }
+}
+
+function showBill(order){
+  currentBillData = order;
+  let html = `
+    <p><b>Order ID:</b> ${order.order_id}</p>
+    <p><b>Product:</b> ${order.name}</p>
+    <p><b>Quantity:</b> ${order.quantity}</p>
+    <p><b>Price per unit:</b> ₹${order.price_per_unit}</p>
+    <p><b>Total Price:</b> ₹${order.total_price}</p>
+    <p><b>Order Date:</b> ${order.order_date}</p>
+    <p><b>Customer:</b> ${username}</p>
+  `;
+  document.getElementById("billDetails").innerHTML = html;
+  document.getElementById("billModal").style.display = "flex";
+}
+
+function closeModal(){ document.getElementById("billModal").style.display = "none"; }
+
+function downloadBill(){
+  if(!currentBillData) return;
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  doc.setFontSize(16);
+  doc.text("BONGO BASKET - Order Bill", 20, 20);
+  doc.setFontSize(12);
+  doc.text(`Order ID: ${currentBillData.order_id}`, 20, 35);
+  doc.text(`Customer: ${username}`, 20, 45);
+  doc.text(`Product: ${currentBillData.name}`, 20, 55);
+  doc.text(`Quantity: ${currentBillData.quantity}`, 20, 65);
+  doc.text(`Price per unit: ₹${currentBillData.price_per_unit}`, 20, 75);
+  doc.text(`Total Price: ₹${currentBillData.total_price}`, 20, 85);
+  doc.text(`Order Date: ${currentBillData.order_date}`, 20, 95);
+  doc.save(`Order_${currentBillData.order_id}.pdf`);
+}
+
+function logout(){
+  localStorage.clear();
+  window.location.href = "login.html";
+}
+
+// Init
+loadOrders();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,394 @@
+```html
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Dashboard</title>
+
+<style>
+
+body{
+font-family:Arial;
+margin:0;
+background:#f4f6f9;
+}
+
+header{
+background:#111;
+color:white;
+padding:15px;
+text-align:center;
+}
+
+.container{
+padding:20px;
+}
+
+.card{
+background:white;
+padding:20px;
+margin-bottom:20px;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
+input{
+padding:8px;
+margin:5px;
+}
+
+button{
+padding:8px 15px;
+background:#007bff;
+border:none;
+color:white;
+cursor:pointer;
+border-radius:5px;
+}
+
+button:hover{
+background:#0056b3;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:10px;
+}
+
+th,td{
+border:1px solid #ddd;
+padding:10px;
+text-align:center;
+}
+
+th{
+background:#333;
+color:white;
+}
+
+.deleteBtn{
+background:red;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+<h1>Admin Dashboard</h1>
+</header>
+
+<div class="container">
+
+<!-- BUSINESS REPORT -->
+<div class="card">
+
+<h2>Business Report</h2>
+
+<button onclick="loadOverallBusiness()">Overall Business</button>
+
+<hr>
+
+<h3>Daily Business</h3>
+
+<input type="date" id="dailyDate">
+<button onclick="loadDailyBusiness()">Check</button>
+
+<hr>
+
+<h3>Monthly Business</h3>
+
+<input type="number" id="month" placeholder="Month (1-12)">
+<input type="number" id="year" placeholder="Year">
+
+<button onclick="loadMonthlyBusiness()">Check</button>
+
+<hr>
+
+<p id="business"></p>
+
+<div id="categorySales"></div>
+
+</div>
+
+
+<!-- ADD PRODUCT -->
+
+<div class="card">
+
+<h2>Add Product</h2>
+
+<input id="pname" placeholder="Product Name">
+<input id="pdesc" placeholder="Description">
+<input id="pprice" placeholder="Price">
+<input id="pstock" placeholder="Stock">
+<input id="pcategory" placeholder="Category ID">
+<input id="pimage" placeholder="Image URL">
+
+<button onclick="addProduct()">Add Product</button>
+
+<p id="addProductMsg"></p>
+
+</div>
+
+
+<!-- DELETE PRODUCT -->
+
+<div class="card">
+
+<h2>Delete Product</h2>
+
+<input id="deleteProductId" placeholder="Product ID">
+
+<button onclick="deleteProduct()">Delete Product</button>
+
+</div>
+
+
+<!-- MODIFY USER -->
+
+<div class="card">
+
+<h2>Modify User</h2>
+
+<input id="userId" placeholder="User ID">
+<input id="username" placeholder="Username">
+<input id="email" placeholder="Email">
+<input id="role" placeholder="Role (USER / ADMIN)">
+
+<button onclick="modifyUser()">Update User</button>
+
+<p id="userMsg"></p>
+
+</div>
+
+
+<!-- ORDERS -->
+
+<div class="card">
+
+<h2>Orders</h2>
+
+<button onclick="loadOrders()">Load Orders</button>
+
+<table>
+
+<thead>
+<tr>
+<th>Order ID</th>
+<th>User ID</th>
+<th>Total</th>
+<th>Status</th>
+<th>Delete</th>
+</tr>
+</thead>
+
+<tbody id="ordersTable"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+
+<script>
+
+const API="http://localhost:9092";
+
+
+/* BUSINESS REPORT FUNCTIONS */
+
+async function loadOverallBusiness(){
+
+const res=await fetch(API+"/admin/business/overall");
+
+const data=await res.json();
+
+showBusinessData(data);
+
+}
+
+
+async function loadDailyBusiness(){
+
+const date=document.getElementById("dailyDate").value;
+
+const res=await fetch(API+"/admin/business/daily?date="+date);
+
+const data=await res.json();
+
+showBusinessData(data);
+
+}
+
+
+async function loadMonthlyBusiness(){
+
+const month=document.getElementById("month").value;
+
+const year=document.getElementById("year").value;
+
+const res=await fetch(API+"/admin/business/monthly?month="+month+"&year="+year);
+
+const data=await res.json();
+
+showBusinessData(data);
+
+}
+
+
+function showBusinessData(data){
+
+document.getElementById("business").innerHTML=
+"<b>Total Business:</b> ₹"+data.totalBusiness;
+
+let html="<h3>Category Sales</h3>";
+
+for(let cat in data.categorySales){
+
+html+=cat+" : "+data.categorySales[cat]+" items<br>";
+
+}
+
+document.getElementById("categorySales").innerHTML=html;
+
+}
+
+
+/* ADD PRODUCT */
+
+async function addProduct(){
+
+const body={
+
+name:document.getElementById("pname").value,
+description:document.getElementById("pdesc").value,
+price:document.getElementById("pprice").value,
+stock:document.getElementById("pstock").value,
+categoryId:document.getElementById("pcategory").value,
+imageUrl:document.getElementById("pimage").value
+
+};
+
+const res=await fetch(API+"/admin/products/add",{
+
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify(body)
+
+});
+
+const data=await res.text();
+
+document.getElementById("addProductMsg").innerText=data;
+
+}
+
+
+/* DELETE PRODUCT */
+
+async function deleteProduct(){
+
+const body={
+
+productId:document.getElementById("deleteProductId").value
+
+};
+
+await fetch(API+"/admin/products/delete",{
+
+method:"DELETE",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify(body)
+
+});
+
+alert("Product Deleted");
+
+}
+
+
+/* MODIFY USER */
+
+async function modifyUser(){
+
+const body={
+
+userId:document.getElementById("userId").value,
+username:document.getElementById("username").value,
+email:document.getElementById("email").value,
+role:document.getElementById("role").value
+
+};
+
+await fetch(API+"/admin/users/modify",{
+
+method:"PUT",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify(body)
+
+});
+
+document.getElementById("userMsg").innerText="User Updated";
+
+}
+
+
+/* LOAD ORDERS */
+
+async function loadOrders(){
+
+const res=await fetch(API+"/admin/orders/all");
+
+const data=await res.json();
+
+let html="";
+
+data.forEach(o=>{
+
+html+=`
+
+<tr>
+
+<td>${o.order_id}</td>
+<td>${o.user_id}</td>
+<td>₹${o.total_amount}</td>
+<td>${o.status}</td>
+
+<td>
+<button class="deleteBtn" onclick="deleteOrder('${o.order_id}')">
+Delete
+</button>
+</td>
+
+</tr>
+
+`;
+
+});
+
+document.getElementById("ordersTable").innerHTML=html;
+
+}
+
+
+/* DELETE ORDER */
+
+async function deleteOrder(id){
+
+await fetch(API+"/admin/orders/delete/"+id,{
+method:"DELETE"
+});
+
+loadOrders();
+
+}
+
+</script>
+
+</body>
+</html>
+```
