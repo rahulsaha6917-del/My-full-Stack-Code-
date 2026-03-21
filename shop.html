@@ -4,8 +4,6 @@
 <meta charset="UTF-8">
 <title>Bongo Basket | Shop</title>
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
@@ -38,7 +36,9 @@ body{
   gap:20px;
 }
 
-.sidebar h2{color:var(--primary);}
+.sidebar h2{
+  color:var(--primary);
+}
 
 .sidebar a{
   color:white;
@@ -48,7 +48,9 @@ body{
   transition:0.3s;
 }
 
-.sidebar a:hover{background:var(--primary);}
+.sidebar a:hover{
+  background:var(--primary);
+}
 
 /* MAIN */
 .main{
@@ -64,9 +66,6 @@ nav{
   justify-content:space-between;
   align-items:center;
   box-shadow:0 4px 10px rgba(0,0,0,0.1);
-  position:sticky;
-  top:0;
-  z-index:100;
 }
 
 .search-box{
@@ -99,7 +98,9 @@ nav{
 }
 
 /* CONTENT */
-.container{padding:30px 5%;}
+.container{
+  padding:30px 5%;
+}
 
 .category-bar{
   display:flex;
@@ -117,7 +118,9 @@ nav{
   cursor:pointer;
 }
 
-.category-btn:hover{background:var(--primary);}
+.category-btn:hover{
+  background:var(--primary);
+}
 
 .product-grid{
   display:grid;
@@ -133,7 +136,9 @@ nav{
   transition:0.3s;
 }
 
-.card:hover{transform:translateY(-5px);}
+.card:hover{
+  transform:translateY(-5px);
+}
 
 .img-box{
   height:150px;
@@ -163,90 +168,19 @@ nav{
   cursor:pointer;
 }
 
-.add-btn:hover{background:#4f46e5;}
+.add-btn:hover{
+  background:#4f46e5;
+}
 
-/* 📱 MOBILE DESIGN */
 @media(max-width:800px){
-
-  body{flex-direction:column;}
-
   .sidebar{display:none;}
   .main{margin-left:0;}
-
-  nav{
-    flex-direction:column;
-    align-items:flex-start;
-    gap:10px;
-    padding:10px 15px;
-  }
-
-  .search-box{width:100%;}
-
-  .cart-icon{
-    position:absolute;
-    right:15px;
-    top:15px;
-  }
-
-  .container{padding:15px;}
-
-  .category-bar{
-    overflow-x:auto;
-    flex-wrap:nowrap;
-  }
-
-  .category-btn{
-    white-space:nowrap;
-    font-size:12px;
-    padding:6px 12px;
-  }
-
-  .product-grid{
-    grid-template-columns:repeat(2,1fr);
-    gap:15px;
-  }
-
-  .img-box{height:120px;}
-
-  h4{font-size:14px;}
-  .price{font-size:14px;}
-
-  .add-btn{
-    padding:8px;
-    font-size:13px;
-  }
-
-  /* Bottom Nav */
-  .bottom-nav{
-    position:fixed;
-    bottom:0;
-    left:0;
-    width:100%;
-    background:white;
-    display:flex;
-    justify-content:space-around;
-    padding:10px 0;
-    box-shadow:0 -4px 10px rgba(0,0,0,0.1);
-    z-index:1000;
-  }
-
-  .bottom-nav a{
-    text-decoration:none;
-    color:var(--dark);
-    font-size:12px;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-  }
-
-  body{padding-bottom:70px;}
 }
 </style>
 </head>
 
 <body>
 
-<!-- SIDEBAR -->
 <div class="sidebar">
   <h2>BONGO</h2>
   <a href="shop.html">🏠 Dashboard</a>
@@ -258,7 +192,6 @@ nav{
 
 <div class="main">
 
-  <!-- NAV -->
   <nav>
     <div>
       <input type="text" class="search-box" placeholder="Search..." onkeyup="searchProducts(this.value)">
@@ -269,23 +202,17 @@ nav{
     </div>
   </nav>
 
-  <!-- CONTENT -->
   <div class="container">
+
     <div class="category-bar" id="category-bar"></div>
+
     <div class="product-grid" id="grid"></div>
+
   </div>
 </div>
 
-<!-- 📱 Bottom Navigation -->
-<div class="bottom-nav">
-  <a href="shop.html">🏠<span>Home</span></a>
-  <a href="cart.html">🛒<span>Cart</span></a>
-  <a href="orderhistory.html">📦<span>Orders</span></a>
-  <a href="payment.html">💳<span>Pay</span></a>
-</div>
-
 <script>
-const API_BASE="https://my-full-stack-ae3l.onrender.com/api";
+const API_BASE=" https://my-full-stack-ae3l.onrender.com/api";
 const currentUsername=localStorage.getItem("username");
 let allProducts=[];
 
@@ -294,7 +221,7 @@ window.onload=function(){
     window.location.href="login.html";
     return;
   }
-  document.getElementById("username-display").innerText="Hello, "+currentUsername;
+  document.getElementById("username-display").innerText = "Hello, " + currentUsername;
   loadProducts();
   loadCategories();
   fetchCartCount();
@@ -332,9 +259,7 @@ function renderProducts(products){
 
   grid.innerHTML=products.map(p=>`
     <div class="card">
-      <div class="img-box">
-        <img src="${p.images?.[0]||'https://via.placeholder.com/150'}">
-      </div>
+      <div class="img-box"><img src="${p.images?.[0]||'https://via.placeholder.com/150'}"></div>
       <h4>${p.name}</h4>
       <div class="price">₹${p.price}</div>
       <button class="add-btn" onclick="addToCart(${p.product_id})">Add</button>
