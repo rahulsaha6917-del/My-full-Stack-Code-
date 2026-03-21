@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bongo Basket | Payment</title>
+
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
@@ -13,7 +16,10 @@
   --delivery:#f59e0b;
 }
 
-*{box-sizing:border-box;font-family:'Poppins',sans-serif;}
+*{
+  box-sizing:border-box;
+  font-family:'Poppins',sans-serif;
+}
 
 body{
   margin:0;
@@ -30,63 +36,74 @@ body{
   width:100%;
   background:rgba(255,255,255,0.1);
   backdrop-filter:blur(15px);
-  padding:15px 30px;
+  padding:15px 20px;
   display:flex;
   justify-content:space-between;
   align-items:center;
+  flex-wrap:wrap;
+  gap:10px;
   box-shadow:0 5px 15px rgba(0,0,0,0.2);
-  border-radius:0 0 20px 20px;
-  margin-bottom:30px;
 }
-.header h2{margin:0; font-size:24px;}
+
+.header h2{
+  margin:0;
+  font-size:20px;
+}
+
 .header .user-info{
-  font-weight:500;
-  font-size:16px;
-  margin-right:15px;
-  color:#fff;
+  font-size:14px;
 }
+
+.header .btns{
+  display:flex;
+  gap:8px;
+}
+
 .header .btns button{
-  margin-left:10px;
   border:none;
-  padding:8px 14px;
-  border-radius:10px;
+  padding:8px 12px;
+  border-radius:8px;
   cursor:pointer;
-  font-weight:600;
-  transition:0.3s;
+  font-size:13px;
   color:white;
 }
-.header .shop-btn{background:var(--primary);}
-.header .shop-btn:hover{background:#4f46e5;}
-.header .logout-btn{background:#ef4444;}
-.header .logout-btn:hover{background:#dc2626;}
 
-/* PAYMENT CONTAINER */
+.header .shop-btn{background:var(--primary);}
+.header .logout-btn{background:#ef4444;}
+
+/* CONTAINER */
 .container{
   width:400px;
+  max-width:95%;
   background:rgba(255,255,255,0.1);
   backdrop-filter:blur(15px);
-  padding:30px;
-  border-radius:20px;
+  padding:25px;
+  border-radius:16px;
   box-shadow:0 10px 30px rgba(0,0,0,0.3);
+  margin-top:30px;
 }
 
-h2{text-align:center;margin-bottom:20px;}
+/* TEXT */
+h2{
+  text-align:center;
+  margin-bottom:20px;
+}
 
 .total{
-  font-size:22px;
-  font-weight:600;
+  font-size:20px;
   text-align:center;
-  margin-bottom:10px;
+  margin-bottom:8px;
   color:#22c55e;
 }
 
 .delivery{
-  font-size:16px;
+  font-size:14px;
   text-align:center;
-  margin-bottom:15px;
+  margin-bottom:12px;
   color:var(--delivery);
 }
 
+/* INPUT */
 input{
   width:100%;
   padding:12px;
@@ -96,36 +113,86 @@ input{
   outline:none;
   background:rgba(255,255,255,0.2);
   color:white;
+  font-size:14px;
 }
 
-input::placeholder{color:#ddd;}
+input::placeholder{
+  color:#ddd;
+}
 
-button.pay-btn{
+/* BUTTON */
+.pay-btn{
   width:100%;
   padding:14px;
   border:none;
-  border-radius:12px;
+  border-radius:10px;
   background:linear-gradient(to right,#6366f1,#22c55e);
   color:white;
-  font-size:16px;
+  font-size:15px;
   cursor:pointer;
-  transition:0.3s;
   margin-top:10px;
+  transition:0.3s;
 }
-button.pay-btn:hover{transform:scale(1.05);}
+
+.pay-btn:hover{
+  transform:scale(1.05);
+}
 
 .loader{
   display:none;
   text-align:center;
   margin-top:10px;
 }
+
+/* 📱 MOBILE */
+@media(max-width:600px){
+
+  body{
+    padding:10px;
+  }
+
+  .header{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .header h2{
+    font-size:18px;
+  }
+
+  .header .btns{
+    width:100%;
+    justify-content:space-between;
+  }
+
+  .container{
+    width:100%;
+    padding:20px;
+    border-radius:12px;
+  }
+
+  .total{
+    font-size:18px;
+  }
+
+  input{
+    font-size:13px;
+    padding:11px;
+  }
+
+  .pay-btn{
+    font-size:14px;
+    padding:13px;
+  }
+}
 </style>
 </head>
+
 <body>
 
 <!-- HEADER -->
 <div class="header">
-  <div style="display:flex; align-items:center;">
+  <div>
     <h2>BONGO BASKET</h2>
     <div class="user-info" id="usernameDisplay"></div>
   </div>
@@ -135,10 +202,7 @@ button.pay-btn:hover{transform:scale(1.05);}
   </div>
 </div>
 
-
-
-
-<!-- PAYMENT CONTAINER -->
+<!-- PAYMENT BOX -->
 <div class="container">
   <h2>💳 Secure Payment</h2>
 
@@ -154,46 +218,49 @@ button.pay-btn:hover{transform:scale(1.05);}
 </div>
 
 <script>
-const API=" https://my-full-stack-ae3l.onrender.com/api";
+const API="https://my-full-stack-ae3l.onrender.com/api";
 const username = localStorage.getItem("username");
 
-// Redirect if not logged in
-if(!username){ window.location="login.html"; }
+if(!username){
+  window.location="login.html";
+}
 
-// Show username in header
-document.getElementById("usernameDisplay").innerText = " Hello, " + username;
+document.getElementById("usernameDisplay").innerText = "Hello, " + username;
 
-// Load cart
 let cartTotal = 0;
 let deliveryCharge = 0;
 let totalAmount = 0;
 
 async function loadCart(){
-  const res = await fetch(API+"/cart/items?username="+username);
-  const data = await res.json();
+  try{
+    const res = await fetch(API+"/cart/items?username="+username);
+    const data = await res.json();
 
-  cartTotal = data.cart.overall_total_price || 0;
+    cartTotal = data.cart?.overall_total_price || 0;
 
-  if(cartTotal < 10000 && cartTotal > 0){
-    deliveryCharge = 200;
-    document.getElementById("deliveryInfo").innerText = `Delivery Charge: ₹${deliveryCharge}`;
-  } else {
-    deliveryCharge = 0;
-    document.getElementById("deliveryInfo").innerText = `Delivery is Free! 🎉`;
+    if(cartTotal < 10000 && cartTotal > 0){
+      deliveryCharge = 200;
+      document.getElementById("deliveryInfo").innerText = "Delivery Charge: ₹200";
+    } else if(cartTotal > 0){
+      deliveryCharge = 0;
+      document.getElementById("deliveryInfo").innerText = "Free Delivery 🎉";
+    }
+
+    totalAmount = cartTotal + deliveryCharge;
+
+    document.getElementById("cartTotal").innerText = cartTotal;
+    document.getElementById("totalAmount").innerText = totalAmount;
+
+  }catch(e){
+    alert("Error loading cart");
   }
-
-  totalAmount = cartTotal + deliveryCharge;
-
-  document.getElementById("cartTotal").innerText = cartTotal;
-  document.getElementById("totalAmount").innerText = totalAmount;
 }
 
 loadCart();
 
-// Pay Now
 async function payNow(){
-  const name=document.getElementById("name").value;
-  const address=document.getElementById("address").value;
+  const name=document.getElementById("name").value.trim();
+  const address=document.getElementById("address").value.trim();
 
   if(!name || !address){
     alert("Please fill all fields");
@@ -202,29 +269,37 @@ async function payNow(){
 
   document.getElementById("loader").style.display="block";
 
-  const res = await fetch(API+"/payment/create",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({username,totalAmount})
-  });
+  try{
+    const res = await fetch(API+"/payment/create",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({username,totalAmount})
+    });
 
-  const order = await res.json();
+    const order = await res.json();
 
-  var options={
-    key:"rzp_test_LqWBBDbgwot5lh",
-    amount:totalAmount*100,
-    currency:"INR",
-    name:"Bongo Basket",
-    description:"Order Payment",
-    order_id:order.orderId,
-    handler:function(response){ verifyPayment(response); }
-  };
+    var options={
+      key:"rzp_test_LqWBBDbgwot5lh",
+      amount:totalAmount*100,
+      currency:"INR",
+      name:"Bongo Basket",
+      description:"Order Payment",
+      order_id:order.orderId,
+      handler:function(response){
+        verifyPayment(response);
+      }
+    };
 
-  var rzp=new Razorpay(options);
-  rzp.open();
+    var rzp=new Razorpay(options);
+    rzp.open();
+
+  }catch(e){
+    alert("Payment failed ❌");
+  }
+
+  document.getElementById("loader").style.display="none";
 }
 
-// Verify payment
 async function verifyPayment(res){
   await fetch(API+"/payment/verify",{
     method:"POST",
@@ -241,13 +316,11 @@ async function verifyPayment(res){
   window.location="orderhistory.html";
 }
 
-// LOGOUT
 function logout(){
   localStorage.clear();
   window.location.href="login.html";
 }
 
-// GO SHOP
 function goShop(){
   window.location.href="shop.html";
 }
