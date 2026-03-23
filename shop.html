@@ -2,177 +2,71 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Bongo Basket | Shop</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bongo Basket</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 
 <style>
 :root{
-  --primary:#6366f1;
-  --accent:#22c55e;
-  --dark:#0f172a;
+  --purple:#ed3a3d;
+  --pink:#d5db27;
+  --orange:#36f50b;
   --bg:#f8fafc;
 }
 
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:'Poppins',sans-serif;
-}
+*{margin:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
 
-body{
-  background:var(--bg);
-}
+body{background:var(--bg);}
 
-/* SIDEBAR */
-.sidebar{
-  width:260px;
-  height:100vh;
-  background:linear-gradient(180deg,#020617,#0f172a);
-  color:white;
-  position:fixed;
-  top:0;
-  left:0;
-  padding:20px;
-  transition:0.3s;
-  z-index:1000;
-  border-top-right-radius:20px;
-  border-bottom-right-radius:20px;
-}
-
-/* HEADER */
-.sidebar-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:25px;
-}
-
-.close-btn{
-  display:none;
-  cursor:pointer;
-}
-
-/* LINKS */
-.sidebar-links a{
-  display:block;
-  padding:14px;
-  margin-bottom:12px;
-  border-radius:12px;
-  text-decoration:none;
-  color:white;
-  font-size:15px;
-  transition:0.3s;
-}
-
-.sidebar-links a:hover{
-  background:rgba(255,255,255,0.1);
-}
-
-/* OVERLAY */
-.overlay{
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  background:rgba(0,0,0,0.5);
-  backdrop-filter:blur(3px);
-  opacity:0;
-  visibility:hidden;
-  transition:0.3s;
-  z-index:999;
-}
-
-.overlay.show{
-  opacity:1;
-  visibility:visible;
-}
-
-/* MAIN */
-.main{
-  margin-left:260px;
-  transition:0.3s;
-}
-
-/* NAV */
+/* NAVBAR */
 nav{
+  background:linear-gradient(135deg,var(--purple),var(--pink),var(--orange));
+  color:white;
   display:flex;
   justify-content:space-between;
   align-items:center;
-  padding:15px 5%;
-  background:rgba(255,255,255,0.8);
-  backdrop-filter:blur(10px);
-  border-bottom:1px solid #e5e7eb;
+  padding:12px 5%;
 }
 
-.menu-btn{
-  display:none;
-  font-size:22px;
-  cursor:pointer;
+.logo{
+  font-weight:800;
+  font-size:18px;
 }
 
-.search-box{
-  padding:10px 15px;
-  border-radius:25px;
-  border:1px solid #ddd;
+.search{
+  padding:10px;
+  border:none;
+  border-radius:20px;
   width:250px;
 }
 
-.username{
-  margin-left:10px;
+/* CATEGORY */
+.categories{
+  display:flex;
+  gap:20px;
+  background:white;
+  padding:15px;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+
+.categories span{
+  cursor:pointer;
   font-weight:600;
 }
 
-/* CART */
-.cart{
-  position:relative;
-  cursor:pointer;
-}
-
-.badge{
-  position:absolute;
-  top:-8px;
-  right:-10px;
-  background:var(--accent);
-  color:white;
-  padding:3px 6px;
-  border-radius:50%;
-  font-size:11px;
-}
-
-/* CONTENT */
-.container{
-  padding:30px 5%;
-}
-
-/* CATEGORY */
-.category-bar{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  margin-bottom:20px;
-}
-
-.category-btn{
-  padding:8px 18px;
-  border:none;
-  border-radius:30px;
-  background:#e2e8f0;
-  cursor:pointer;
-}
-
-.category-btn:hover{
-  background:var(--primary);
-  color:white;
+.categories span:hover{
+  color:var(--purple);
 }
 
 /* GRID */
-.product-grid{
+.container{padding:30px 5%;}
+
+.grid{
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
-  gap:25px;
+  gap:20px;
 }
 
 .card{
@@ -180,247 +74,128 @@ nav{
   padding:15px;
   border-radius:15px;
   box-shadow:0 8px 20px rgba(0,0,0,0.05);
-  transition:0.3s;
 }
 
-.card:hover{
-  transform:translateY(-5px);
-}
-
-.img-box{
+.card img{
+  width:100%;
   height:150px;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-}
-
-.img-box img{
-  max-width:100%;
-  max-height:100%;
+  object-fit:contain;
 }
 
 .price{
-  color:var(--primary);
-  font-weight:600;
-  margin:10px 0;
+  color:var(--orange);
+  font-weight:700;
 }
 
-.add-btn{
-  background:linear-gradient(135deg,#6366f1,#4f46e5);
+.btn{
+  background:linear-gradient(135deg,var(--purple),var(--pink));
   color:white;
-  padding:10px;
   border:none;
-  border-radius:8px;
+  padding:10px;
   width:100%;
+  border-radius:8px;
   cursor:pointer;
 }
 
-/* TOAST */
-#toast{
+/* SIDEBAR (DESKTOP ONLY) */
+.sidebar{
   position:fixed;
-  bottom:20px;
-  right:20px;
-  background:var(--accent);
+  width:220px;
+  height:100%;
+  background:#020617;
   color:white;
-  padding:10px 20px;
-  border-radius:10px;
-  display:none;
+  padding:20px;
+}
+
+.sidebar a{
+  display:block;
+  margin:10px 0;
+  color:white;
+  text-decoration:none;
+}
+
+/* MAIN SHIFT */
+.main{
+  margin-left:220px;
 }
 
 /* MOBILE */
 @media(max-width:800px){
-
-  .menu-btn{
-    display:block;
-  }
-
-  .sidebar{
-    transform:translateX(-100%);
-    width:80%;
-    max-width:300px;
-    box-shadow:0 10px 30px rgba(0,0,0,0.4);
-  }
-
-  .sidebar.show{
-    transform:translateX(0);
-  }
-
-  .close-btn{
-    display:block;
-  }
-
-  .main{
-    margin-left:0;
-  }
-
-  .search-box{
-    width:150px;
-  }
+  .sidebar{display:none;}
+  .main{margin-left:0;}
 }
 </style>
 </head>
 
 <body>
 
-<!-- OVERLAY -->
-<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
-
-<!-- SIDEBAR -->
-<div class="sidebar" id="sidebar">
-
-  <div class="sidebar-header">
-    <h2>BONGO</h2>
-    <span class="close-btn" onclick="toggleSidebar()">✖</span>
-  </div>
-
-  <div class="sidebar-links">
-    <a href="shop.html">🏠 Dashboard</a>
-    <a href="cart.html">🛒 Cart</a>
-    <a href="orderhistory.html">📦 Orders</a>
-    <a href="payment.html">💳 Payment</a>
-    <a href="#" onclick="logout()">🚪 Logout</a>
-  </div>
-
+<!-- SIDEBAR (DESKTOP) -->
+<div class="sidebar">
+  <h2>BONGO</h2>
+  <a href="#">Dashboard</a>
+  <a href="#">Cart</a>
+  <a href="#">Orders</a>
 </div>
 
 <!-- MAIN -->
 <div class="main">
 
-  <!-- NAV -->
-  <nav>
-    <div>
-      <span class="menu-btn" onclick="toggleSidebar()">☰</span>
-      <input type="text" class="search-box" placeholder="Search..." onkeyup="searchProducts(this.value)">
-      <span class="username" id="username"></span>
-    </div>
+<!-- NAV -->
+<nav>
+  <div class="logo">BONGO BASKET</div>
+  <input class="search" placeholder="Search..." onkeyup="searchProducts(this.value)">
+  <div>🛒 <span id="count">0</span></div>
+</nav>
 
-    <div class="cart" onclick="window.location.href='cart.html'">
-      🛒 <span class="badge" id="cart-count">0</span>
-    </div>
-  </nav>
+<!-- CATEGORY -->
+<div class="categories">
+  <span onclick="loadProducts('all')">All</span>
+  
+</div>
 
-  <!-- CONTENT -->
-  <div class="container">
-    <div class="category-bar" id="category-bar"></div>
-    <div class="product-grid" id="grid"></div>
-  </div>
+<!-- PRODUCTS -->
+<div class="container">
+  <div class="grid" id="grid"></div>
+</div>
 
 </div>
 
-<!-- TOAST -->
-<div id="toast">Added to cart</div>
-
 <script>
-const API_BASE="https://my-full-stack-ae3l.onrender.com/api";
-const username=localStorage.getItem("username");
-let allProducts=[];
+const API="https://my-full-stack-ae3l.onrender.com/api";
+let products=[];
 
-/* SIDEBAR */
-function toggleSidebar(){
-  document.getElementById("sidebar").classList.toggle("show");
-  document.getElementById("overlay").classList.toggle("show");
-}
-
-/* INIT */
-window.onload=function(){
-  if(!username){
-    window.location.href="login.html";
-    return;
-  }
-
-  document.getElementById("username").innerText="Hello, "+username;
-
-  loadProducts();
-  loadCategories();
-  fetchCartCount();
+window.onload=()=>{
+  loadProducts('all');
 };
 
-/* PRODUCTS */
-async function loadProducts(){
-  const grid=document.getElementById("grid");
-  grid.innerHTML="Loading...";
-
-  const res=await fetch(API_BASE+"/products");
+/* LOAD */
+async function loadProducts(cat){
+  const res=await fetch(API+"/products");
   const data=await res.json();
+  products=data.products||data;
 
-  allProducts=data.products||data;
-  renderProducts(allProducts);
+  if(cat!=='all'){
+    products=products.filter(p=>p.category===cat);
+  }
+
+  render(products);
 }
 
 /* SEARCH */
 function searchProducts(q){
-  renderProducts(allProducts.filter(p=>p.name.toLowerCase().includes(q.toLowerCase())));
-}
-
-/* CATEGORY */
-async function loadCategories(){
-  const res=await fetch(API_BASE+"/categories");
-  const data=await res.json();
-
-  const bar=document.getElementById("category-bar");
-  bar.innerHTML='<button class="category-btn" onclick="renderProducts(allProducts)">All</button>';
-
-  data.forEach(cat=>{
-    const btn=document.createElement("button");
-    btn.className="category-btn";
-    btn.innerText=cat.category_name;
-    btn.onclick=()=>renderProducts(allProducts.filter(p=>p.category===cat.category_name));
-    bar.appendChild(btn);
-  });
+  render(products.filter(p=>p.name.toLowerCase().includes(q.toLowerCase())));
 }
 
 /* RENDER */
-function renderProducts(products){
-  const grid=document.getElementById("grid");
-
-  if(!products.length){
-    grid.innerHTML="No products";
-    return;
-  }
-
-  grid.innerHTML=products.map(p=>`
+function render(list){
+  document.getElementById("grid").innerHTML=list.map(p=>`
     <div class="card">
-      <div class="img-box">
-        <img src="${p.images?.[0]||'https://via.placeholder.com/150'}">
-      </div>
+      <img src="${p.images?.[0]||'https://via.placeholder.com/150'}">
       <h4>${p.name}</h4>
-      <div>⭐⭐⭐⭐☆</div>
       <div class="price">₹${p.price}</div>
-      <button class="add-btn" onclick="addToCart(${p.product_id})">Add</button>
+      <button class="btn">Add</button>
     </div>
   `).join("");
-}
-
-/* ADD CART */
-async function addToCart(productId){
-  await fetch(API_BASE+"/cart/add",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({username,productId,quantity:1})
-  });
-
-  fetchCartCount();
-  showToast();
-}
-
-/* CART COUNT */
-async function fetchCartCount(){
-  const res=await fetch(API_BASE+"/cart/items/count?username="+username);
-  const count=await res.json();
-  document.getElementById("cart-count").innerText=count;
-}
-
-/* TOAST */
-function showToast(){
-  const t=document.getElementById("toast");
-  t.style.display="block";
-  setTimeout(()=>t.style.display="none",2000);
-}
-
-/* LOGOUT */
-function logout(){
-  localStorage.clear();
-  window.location.href="login.html";
 }
 </script>
 
