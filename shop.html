@@ -2,124 +2,176 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bongo Basket</title>
+<title>Bongo Basket | Shop</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
 :root{
-  --purple:#ed3a3d;
-  --pink:#d5db27;
-  --orange:#36f50b;
-  --bg:#f8fafc;
+  --primary:#6366f1;
+  --accent:#22c55e;
+  --dark:#0f172a;
+  --sidebar:#020617;
+  --bg:#eef2f7;
+  --card:#ffffff;
 }
 
-*{margin:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+*{box-sizing:border-box;margin:0;font-family:'Poppins',sans-serif;}
 
-body{background:var(--bg);}
+body{
+  display:flex;
+  background:var(--bg);
+}
 
-/* NAVBAR */
-nav{
-  background:linear-gradient(135deg,var(--purple),var(--pink),var(--orange));
+/* SIDEBAR */
+.sidebar{
+  width:240px;
+  height:100vh;
+  background:var(--sidebar);
   color:white;
+  position:fixed;
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+}
+
+.sidebar h2{
+  color:var(--primary);
+}
+
+.sidebar a{
+  color:white;
+  text-decoration:none;
+  padding:10px;
+  border-radius:8px;
+  transition:0.3s;
+}
+
+.sidebar a:hover{
+  background:var(--primary);
+}
+
+/* MAIN */
+.main{
+  margin-left:240px;
+  width:100%;
+}
+
+/* NAV */
+nav{
+  background:white;
+  padding:15px 5%;
   display:flex;
   justify-content:space-between;
   align-items:center;
-  padding:12px 5%;
+  box-shadow:0 4px 10px rgba(0,0,0,0.1);
 }
 
-.logo{
-  font-weight:800;
-  font-size:18px;
-}
-
-.search{
-  padding:10px;
-  border:none;
+.search-box{
+  padding:8px 12px;
   border-radius:20px;
+  border:1px solid #ddd;
   width:250px;
 }
 
-/* CATEGORY */
-.categories{
+.cart-icon{
+  position:relative;
+  cursor:pointer;
+  font-size:20px;
+}
+
+.badge{
+  position:absolute;
+  top:-6px;
+  right:-10px;
+  background:var(--accent);
+  padding:2px 6px;
+  border-radius:50%;
+  font-size:11px;
+}
+
+.username-display{
+  margin-left:20px;
+  font-weight:600;
+  color:var(--dark);
+}
+
+/* CONTENT */
+.container{
+  padding:30px 5%;
+}
+
+.category-bar{
   display:flex;
-  gap:20px;
-  background:white;
-  padding:15px;
-  justify-content:center;
+  gap:10px;
+  margin-bottom:20px;
   flex-wrap:wrap;
 }
 
-.categories span{
+.category-btn{
+  padding:8px 16px;
+  border:none;
+  background:var(--dark);
+  color:white;
+  border-radius:20px;
   cursor:pointer;
-  font-weight:600;
 }
 
-.categories span:hover{
-  color:var(--purple);
+.category-btn:hover{
+  background:var(--primary);
 }
 
-/* GRID */
-.container{padding:30px 5%;}
-
-.grid{
+.product-grid{
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
-  gap:20px;
+  gap:25px;
 }
 
 .card{
   background:white;
-  padding:15px;
   border-radius:15px;
-  box-shadow:0 8px 20px rgba(0,0,0,0.05);
+  padding:15px;
+  box-shadow:0 6px 15px rgba(0,0,0,0.08);
+  transition:0.3s;
 }
 
-.card img{
-  width:100%;
+.card:hover{
+  transform:translateY(-5px);
+}
+
+.img-box{
   height:150px;
-  object-fit:contain;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.img-box img{
+  max-width:100%;
+  max-height:100%;
 }
 
 .price{
-  color:var(--orange);
-  font-weight:700;
+  color:var(--primary);
+  font-weight:600;
+  margin:10px 0;
 }
 
-.btn{
-  background:linear-gradient(135deg,var(--purple),var(--pink));
+.add-btn{
+  background:var(--primary);
   color:white;
   border:none;
   padding:10px;
-  width:100%;
   border-radius:8px;
+  width:100%;
   cursor:pointer;
 }
 
-/* SIDEBAR (DESKTOP ONLY) */
-.sidebar{
-  position:fixed;
-  width:220px;
-  height:100%;
-  background:#020617;
-  color:white;
-  padding:20px;
+.add-btn:hover{
+  background:#4f46e5;
 }
 
-.sidebar a{
-  display:block;
-  margin:10px 0;
-  color:white;
-  text-decoration:none;
-}
-
-/* MAIN SHIFT */
-.main{
-  margin-left:220px;
-}
-
-/* MOBILE */
 @media(max-width:800px){
   .sidebar{display:none;}
   .main{margin-left:0;}
@@ -129,73 +181,110 @@ nav{
 
 <body>
 
-<!-- SIDEBAR (DESKTOP) -->
 <div class="sidebar">
   <h2>BONGO</h2>
-  <a href="#">Dashboard</a>
-  <a href="#">Cart</a>
-  <a href="#">Orders</a>
+  <a href="shop.html">🏠 Dashboard</a>
+  <a href="cart.html">❤️ Cart</a>
+  <a href="orderhistory.html">📦 Orders</a>
+  <a href="payment.html">💳 Payment</a>
+  <a href="#" onclick="logout()">🚪 Logout</a>
 </div>
 
-<!-- MAIN -->
 <div class="main">
 
-<!-- NAV -->
-<nav>
-  <div class="logo">BONGO BASKET</div>
-  <input class="search" placeholder="Search..." onkeyup="searchProducts(this.value)">
-  <div>🛒 <span id="count">0</span></div>
-</nav>
+  <nav>
+    <div>
+      <input type="text" class="search-box" placeholder="Search..." onkeyup="searchProducts(this.value)">
+      <span class="username-display" id="username-display"></span>
+    </div>
+    <div class="cart-icon" onclick="window.location.href='cart.html'">
+      🛒 <span class="badge" id="cart-count">0</span>
+    </div>
+  </nav>
 
-<!-- CATEGORY -->
-<div class="categories">
-  <span onclick="loadProducts('all')">All</span>
-  
-</div>
+  <div class="container">
 
-<!-- PRODUCTS -->
-<div class="container">
-  <div class="grid" id="grid"></div>
-</div>
+    <div class="category-bar" id="category-bar"></div>
 
+    <div class="product-grid" id="grid"></div>
+
+  </div>
 </div>
 
 <script>
-const API="https://my-full-stack-ae3l.onrender.com/api";
-let products=[];
+const API_BASE=" https://my-full-stack-ae3l.onrender.com/api";
+const currentUsername=localStorage.getItem("username");
+let allProducts=[];
 
-window.onload=()=>{
-  loadProducts('all');
+window.onload=function(){
+  if(!currentUsername){
+    window.location.href="login.html";
+    return;
+  }
+  document.getElementById("username-display").innerText = "Hello, " + currentUsername;
+  loadProducts();
+  loadCategories();
+  fetchCartCount();
 };
 
-/* LOAD */
-async function loadProducts(cat){
-  const res=await fetch(API+"/products");
+async function loadProducts(){
+  const res=await fetch(API_BASE+"/products");
   const data=await res.json();
-  products=data.products||data;
-
-  if(cat!=='all'){
-    products=products.filter(p=>p.category===cat);
-  }
-
-  render(products);
+  allProducts=data.products||data;
+  renderProducts(allProducts);
 }
 
-/* SEARCH */
 function searchProducts(q){
-  render(products.filter(p=>p.name.toLowerCase().includes(q.toLowerCase())));
+  renderProducts(allProducts.filter(p=>p.name.toLowerCase().includes(q.toLowerCase())));
 }
 
-/* RENDER */
-function render(list){
-  document.getElementById("grid").innerHTML=list.map(p=>`
+async function loadCategories(){
+  const res=await fetch(API_BASE+"/categories");
+  const data=await res.json();
+  const bar=document.getElementById("category-bar");
+  bar.innerHTML='<button class="category-btn" onclick="renderProducts(allProducts)">All</button>';
+
+  data.forEach(cat=>{
+    const btn=document.createElement("button");
+    btn.className="category-btn";
+    btn.innerText=cat.category_name;
+    btn.onclick=()=>renderProducts(allProducts.filter(p=>p.category===cat.category_name));
+    bar.appendChild(btn);
+  });
+}
+
+function renderProducts(products){
+  const grid=document.getElementById("grid");
+  if(!products.length){grid.innerHTML="No products";return;}
+
+  grid.innerHTML=products.map(p=>`
     <div class="card">
-      <img src="${p.images?.[0]||'https://via.placeholder.com/150'}">
+      <div class="img-box"><img src="${p.images?.[0]||'https://via.placeholder.com/150'}"></div>
       <h4>${p.name}</h4>
       <div class="price">₹${p.price}</div>
-      <button class="btn">Add</button>
+      <button class="add-btn" onclick="addToCart(${p.product_id})">Add</button>
     </div>
   `).join("");
+}
+
+async function addToCart(productId){
+  await fetch(API_BASE+"/cart/add",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({username:currentUsername,productId,quantity:1})
+  });
+  fetchCartCount();
+}
+
+async function fetchCartCount(){
+  const res=await fetch(API_BASE+"/cart/items/count?username="+currentUsername);
+  const count=await res.json();
+  document.getElementById("cart-count").innerText=count;
+}
+
+function logout(){
+  localStorage.clear();
+  window.location.href="login.html";
 }
 </script>
 
