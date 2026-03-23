@@ -8,25 +8,35 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Poppins',sans-serif;
+}
 
 body{
   min-height:100vh;
-  background:linear-gradient(135deg,#ea66c2,#764ba2);
   display:flex;
   flex-direction:column;
   align-items:center;
+  background-size:cover;
+  background-position:center;
 }
 
 /* HEADER */
 header{
   width:100%;
-  padding:25px 0;
+  padding:20px 0;
   text-align:center;
-  font-size:32px;
-  font-weight:700;
   color:#fff;
-  background:rgba(0,0,0,0.2);
+  background:rgba(0,0,0,0.4);
+}
+
+/* LOGO */
+.logo{
+  width:70px;
+  margin-bottom:5px;
 }
 
 /* CARD */
@@ -121,7 +131,9 @@ button:disabled{background:#999;}
 
 <body>
 
-<header>Bongo Basket</header>
+<header id="header">
+  <h1>Bongo Basket</h1>
+</header>
 
 <div class="card">
   <h2>Create Account</h2>
@@ -158,7 +170,6 @@ button:disabled{background:#999;}
       </select>
     </div>
 
-    <!-- 🔐 PROMO CODE FIELD -->
     <div class="form-group" id="promo-group" style="display:none;">
       <label>Admin Promo Code</label>
       <input type="text" id="promoCode" placeholder="Enter admin code">
@@ -176,26 +187,33 @@ button:disabled{background:#999;}
 </div>
 
 <script>
-const API_URL="https://my-full-stack-ae3l.onrender.com/api/users/register";
+document.addEventListener("DOMContentLoaded", () => {
 
-// 🔐 CHANGE THIS CODE
+/* 🎨 BACKGROUND IMAGE (LOCAL FILE) */
+document.body.style.backgroundImage = "background.jpeg";
+
+/* 🏢 LOGO (LOCAL FILE) */
+const logo = document.createElement("img");
+logo.src = "logo.jpeg";
+logo.className = "logo";
+
+document.getElementById("header").prepend(logo);
+
+/* API */
+const API_URL="https://my-full-stack-ae3l.onrender.com/api/users/register";
 const ADMIN_CODE="9831495378";
 
-/* SHOW/HIDE PROMO */
+/* ROLE CHANGE */
 document.getElementById("role").addEventListener("change",function(){
-  const promo=document.getElementById("promo-group");
-  if(this.value==="ADMIN"){
-    promo.style.display="block";
-  }else{
-    promo.style.display="none";
-  }
+  document.getElementById("promo-group").style.display =
+    this.value==="ADMIN" ? "block" : "none";
 });
 
 /* PASSWORD TOGGLE */
-function togglePassword(id){
+window.togglePassword = function(id){
   const input=document.getElementById(id);
   input.type=input.type==="password"?"text":"password";
-}
+};
 
 /* FORM SUBMIT */
 document.getElementById("registerForm").addEventListener("submit",async function(e){
@@ -213,20 +231,16 @@ document.getElementById("registerForm").addEventListener("submit",async function
 
   msg.innerText="";
 
-  /* PASSWORD CHECK */
   if(password!==confirmPassword){
     msg.style.color="red";
     msg.innerText="Passwords do not match!";
     return;
   }
 
-  /* 🔐 ADMIN CODE CHECK */
-  if(role==="ADMIN"){
-    if(promoCode!==ADMIN_CODE){
-      msg.style.color="red";
-      msg.innerText="Invalid Admin Promo Code!";
-      return;
-    }
+  if(role==="ADMIN" && promoCode!==ADMIN_CODE){
+    msg.style.color="red";
+    msg.innerText="Invalid Admin Promo Code!";
+    return;
   }
 
   btn.disabled=true;
@@ -257,6 +271,8 @@ document.getElementById("registerForm").addEventListener("submit",async function
 
   btn.disabled=false;
   btn.innerText="Register";
+});
+
 });
 </script>
 
