@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Bongo Basket | Shop</title>
+<title>Bongo Basket | Modern Shop</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
@@ -11,115 +11,110 @@
   --primary:#6366f1;
   --accent:#22c55e;
   --dark:#0f172a;
-  --sidebar:#020617;
-  --bg:#eef2f7;
-  --card:#ffffff;
+  --bg:#f8fafc;
 }
 
-*{box-sizing:border-box;margin:0;font-family:'Poppins',sans-serif;}
+/* RESET */
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Poppins',sans-serif;
+}
 
 body{
-  display:flex;
   background:var(--bg);
+  display:flex;
 }
 
 /* SIDEBAR */
 .sidebar{
   width:240px;
   height:100vh;
-  background:var(--sidebar);
+  background:linear-gradient(180deg,#020617,#0f172a);
   color:white;
   position:fixed;
+  left:0;
+  top:0;
   padding:20px;
-  display:flex;
-  flex-direction:column;
-  gap:20px;
+  transition:0.3s;
+  z-index:1000;
 }
 
 .sidebar h2{
-  color:var(--primary);
+  color:#818cf8;
+  margin-bottom:20px;
 }
 
 .sidebar a{
-  color:white;
+  display:block;
+  padding:12px;
+  margin-bottom:10px;
+  border-radius:10px;
   text-decoration:none;
-  padding:10px;
-  border-radius:8px;
+  color:white;
   transition:0.3s;
 }
 
 .sidebar a:hover{
-  background:var(--primary);
+  background:rgba(255,255,255,0.1);
+}
+
+/* MOBILE HIDE */
+.sidebar.hide{
+  left:-260px;
+}
+
+/* OVERLAY */
+.overlay{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.4);
+  display:none;
+  z-index:999;
+}
+
+.overlay.show{
+  display:block;
 }
 
 /* MAIN */
 .main{
   margin-left:240px;
   width:100%;
+  transition:0.3s;
 }
 
 /* NAV */
 nav{
-  background:white;
-  padding:15px 5%;
   display:flex;
   justify-content:space-between;
   align-items:center;
-  box-shadow:0 4px 10px rgba(0,0,0,0.1);
+  padding:15px 5%;
+  background:white;
+  box-shadow:0 4px 10px rgba(0,0,0,0.05);
 }
 
-.search-box{
-  padding:8px 12px;
-  border-radius:20px;
-  border:1px solid #ddd;
-  width:250px;
-}
-
-.cart-icon{
-  position:relative;
+/* HAMBURGER */
+.menu-btn{
+  font-size:22px;
   cursor:pointer;
-  font-size:20px;
+  display:none;
 }
 
-.badge{
-  position:absolute;
-  top:-6px;
-  right:-10px;
-  background:var(--accent);
-  padding:2px 6px;
-  border-radius:50%;
-  font-size:11px;
+/* SEARCH */
+.search-box{
+  padding:10px 15px;
+  border-radius:25px;
+  border:1px solid #ddd;
 }
 
-.username-display{
-  margin-left:20px;
-  font-weight:600;
-  color:var(--dark);
-}
-
-/* CONTENT */
+/* GRID */
 .container{
   padding:30px 5%;
-}
-
-.category-bar{
-  display:flex;
-  gap:10px;
-  margin-bottom:20px;
-  flex-wrap:wrap;
-}
-
-.category-btn{
-  padding:8px 16px;
-  border:none;
-  background:var(--dark);
-  color:white;
-  border-radius:20px;
-  cursor:pointer;
-}
-
-.category-btn:hover{
-  background:var(--primary);
 }
 
 .product-grid{
@@ -130,9 +125,9 @@ nav{
 
 .card{
   background:white;
-  border-radius:15px;
   padding:15px;
-  box-shadow:0 6px 15px rgba(0,0,0,0.08);
+  border-radius:15px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.05);
   transition:0.3s;
 }
 
@@ -143,148 +138,120 @@ nav{
 .img-box{
   height:150px;
   display:flex;
-  justify-content:center;
   align-items:center;
-}
-
-.img-box img{
-  max-width:100%;
-  max-height:100%;
+  justify-content:center;
 }
 
 .price{
   color:var(--primary);
   font-weight:600;
-  margin:10px 0;
 }
 
 .add-btn{
   background:var(--primary);
   color:white;
-  border:none;
   padding:10px;
+  border:none;
   border-radius:8px;
   width:100%;
   cursor:pointer;
 }
 
-.add-btn:hover{
-  background:#4f46e5;
-}
-
+/* MOBILE */
 @media(max-width:800px){
-  .sidebar{display:none;}
-  .main{margin-left:0;}
+
+  .menu-btn{
+    display:block;
+  }
+
+  .sidebar{
+    left:-260px;
+  }
+
+  .main{
+    margin-left:0;
+  }
+
+  .sidebar.show{
+    left:0;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<div class="sidebar">
+<!-- OVERLAY -->
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
   <h2>BONGO</h2>
-  <a href="shop.html">🏠 Dashboard</a>
-  <a href="cart.html">❤️ Cart</a>
-  <a href="orderhistory.html">📦 Orders</a>
-  <a href="payment.html">💳 Payment</a>
+  <a href="#">🏠 Dashboard</a>
+  <a href="#">🛒 Cart</a>
+  <a href="#">📦 Orders</a>
+  <a href="#">💳 Payment</a>
   <a href="#" onclick="logout()">🚪 Logout</a>
 </div>
 
+<!-- MAIN -->
 <div class="main">
 
+  <!-- NAV -->
   <nav>
-    <div>
-      <input type="text" class="search-box" placeholder="Search..." onkeyup="searchProducts(this.value)">
-      <span class="username-display" id="username-display"></span>
-    </div>
-    <div class="cart-icon" onclick="window.location.href='cart.html'">
-      🛒 <span class="badge" id="cart-count">0</span>
-    </div>
+    <span class="menu-btn" onclick="toggleSidebar()">☰</span>
+
+    <input type="text" class="search-box" placeholder="Search...">
+
+    <div>🛒</div>
   </nav>
 
+  <!-- CONTENT -->
   <div class="container">
-
-    <div class="category-bar" id="category-bar"></div>
-
     <div class="product-grid" id="grid"></div>
-
   </div>
+
 </div>
 
 <script>
-const API_BASE=" https://my-full-stack-ae3l.onrender.com/api";
-const currentUsername=localStorage.getItem("username");
-let allProducts=[];
+const sidebar=document.getElementById("sidebar");
+const overlay=document.getElementById("overlay");
 
-window.onload=function(){
-  if(!currentUsername){
-    window.location.href="login.html";
-    return;
+/* TOGGLE SIDEBAR */
+function toggleSidebar(){
+  sidebar.classList.toggle("show");
+  overlay.classList.toggle("show");
+}
+
+/* CLOSE ON DESKTOP RESIZE */
+window.addEventListener("resize",()=>{
+  if(window.innerWidth>800){
+    sidebar.classList.remove("show");
+    overlay.classList.remove("show");
   }
-  document.getElementById("username-display").innerText = "Hello, " + currentUsername;
-  loadProducts();
-  loadCategories();
-  fetchCartCount();
-};
+});
 
-async function loadProducts(){
-  const res=await fetch(API_BASE+"/products");
-  const data=await res.json();
-  allProducts=data.products||data;
-  renderProducts(allProducts);
-}
+/* DEMO PRODUCTS */
+const products=[
+  {name:"Apple",price:50},
+  {name:"Mango",price:80},
+  {name:"Banana",price:30},
+  {name:"Orange",price:60},
+];
 
-function searchProducts(q){
-  renderProducts(allProducts.filter(p=>p.name.toLowerCase().includes(q.toLowerCase())));
-}
+const grid=document.getElementById("grid");
 
-async function loadCategories(){
-  const res=await fetch(API_BASE+"/categories");
-  const data=await res.json();
-  const bar=document.getElementById("category-bar");
-  bar.innerHTML='<button class="category-btn" onclick="renderProducts(allProducts)">All</button>';
-
-  data.forEach(cat=>{
-    const btn=document.createElement("button");
-    btn.className="category-btn";
-    btn.innerText=cat.category_name;
-    btn.onclick=()=>renderProducts(allProducts.filter(p=>p.category===cat.category_name));
-    bar.appendChild(btn);
-  });
-}
-
-function renderProducts(products){
-  const grid=document.getElementById("grid");
-  if(!products.length){grid.innerHTML="No products";return;}
-
-  grid.innerHTML=products.map(p=>`
-    <div class="card">
-      <div class="img-box"><img src="${p.images?.[0]||'https://via.placeholder.com/150'}"></div>
-      <h4>${p.name}</h4>
-      <div class="price">₹${p.price}</div>
-      <button class="add-btn" onclick="addToCart(${p.product_id})">Add</button>
-    </div>
-  `).join("");
-}
-
-async function addToCart(productId){
-  await fetch(API_BASE+"/cart/add",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({username:currentUsername,productId,quantity:1})
-  });
-  fetchCartCount();
-}
-
-async function fetchCartCount(){
-  const res=await fetch(API_BASE+"/cart/items/count?username="+currentUsername);
-  const count=await res.json();
-  document.getElementById("cart-count").innerText=count;
-}
+grid.innerHTML=products.map(p=>`
+<div class="card">
+  <div class="img-box">🍎</div>
+  <h4>${p.name}</h4>
+  <div class="price">₹${p.price}</div>
+  <button class="add-btn">Add</button>
+</div>
+`).join("");
 
 function logout(){
-  localStorage.clear();
-  window.location.href="login.html";
+  alert("Logged out");
 }
 </script>
 
