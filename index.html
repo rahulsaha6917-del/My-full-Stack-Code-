@@ -4,10 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bongo Basket - Choose Account</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
 <style>
+/* Reset & Base */
 *{
   margin:0;
   padding:0;
@@ -15,18 +15,17 @@
   font-family:'Poppins',sans-serif;
 }
 
-/* BODY */
+/* Body & background */
 body{
   min-height:100vh;
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:flex-start;
-  background-size:cover;
-  background-position:center;
+  background: linear-gradient(135deg,#667eea,#764ba2);
 }
 
-/* HEADER */
+/* Header */
 header{
   width:100%;
   padding:40px 0;
@@ -43,14 +42,7 @@ header{
   margin-bottom:50px;
 }
 
-/* LOGO */
-.logo{
-  width:80px;
-  display:block;
-  margin:0 auto 10px;
-}
-
-/* CARD */
+/* Container card */
 .container{
   background: rgba(255,255,255,0.15);
   backdrop-filter: blur(15px);
@@ -62,7 +54,6 @@ header{
   box-shadow: 0 20px 50px rgba(0,0,0,0.25);
   transition: transform 0.3s, box-shadow 0.3s;
 }
-
 .container:hover{
   transform: translateY(-5px);
   box-shadow: 0 25px 60px rgba(0,0,0,0.35);
@@ -71,14 +62,18 @@ header{
 h1{
   margin-bottom:15px;
   color:white;
+  font-size:32px;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
 }
 
 p{
   margin-bottom:30px;
   color:white;
+  font-size:16px;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
 }
 
-/* BUTTON */
+/* Buttons */
 button{
   width:100%;
   padding:16px;
@@ -92,13 +87,12 @@ button{
   background: linear-gradient(90deg,#ff758c,#ff7eb3);
   transition:0.3s;
 }
-
 button:hover{
   background: linear-gradient(90deg,#ff7eb3,#ff758c);
   transform: translateY(-2px);
 }
 
-/* MOBILE */
+/* Responsive */
 @media(max-width:480px){
   .container{
     margin:20px;
@@ -111,39 +105,20 @@ button:hover{
 }
 </style>
 </head>
-
 <body>
 
-<!-- ✅ HEADER WITH ID -->
-<header id="header">
-  Bongo Basket
-</header>
+<!-- Page Header -->
+<header>Bongo Basket</header>
 
-<!-- CARD -->
+<!-- Account Selection Card -->
 <div class="container">
   <h1>Welcome!</h1>
   <p>Select your account type to register</p>
-
   <button onclick="registerRole('CUSTOMER')">Register as Customer</button>
   <button onclick="registerRole('ADMIN')">Register as Admin</button>
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-
-/* 🎨 BACKGROUND IMAGE */
-document.body.style.backgroundImage = "background.png";
-
-/* 🏢 LOGO */
-const logo = document.createElement("img");
-logo.src = "./images/logo.jpeg";
-logo.className = "logo.jpeg";
-
-document.getElementById("header").prepend(logo);
-
-});
-
-/* ROLE FUNCTION */
 function registerRole(role){
   localStorage.setItem("selectedRole", role);
   window.location.href="register.html";
