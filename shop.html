@@ -14,7 +14,6 @@
   --bg:#f8fafc;
 }
 
-/* RESET */
 *{
   margin:0;
   padding:0;
@@ -28,40 +27,47 @@ body{
 
 /* SIDEBAR */
 .sidebar{
-  width:250px;
+  width:260px;
   height:100vh;
   background:linear-gradient(180deg,#020617,#0f172a);
   color:white;
   position:fixed;
-  left:0;
   top:0;
+  left:0;
   padding:20px;
   transition:0.3s;
   z-index:1000;
+  border-top-right-radius:20px;
+  border-bottom-right-radius:20px;
 }
 
-.sidebar h2{
-  color:#818cf8;
-  margin-bottom:20px;
+/* HEADER */
+.sidebar-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:25px;
 }
 
-.sidebar a{
+.close-btn{
+  display:none;
+  cursor:pointer;
+}
+
+/* LINKS */
+.sidebar-links a{
   display:block;
-  padding:12px;
-  margin-bottom:10px;
-  border-radius:10px;
+  padding:14px;
+  margin-bottom:12px;
+  border-radius:12px;
   text-decoration:none;
   color:white;
+  font-size:15px;
   transition:0.3s;
 }
 
-.sidebar a:hover{
+.sidebar-links a:hover{
   background:rgba(255,255,255,0.1);
-}
-
-/* MOBILE HIDE */
-.sidebar.hide{
-  left:-260px;
 }
 
 /* OVERLAY */
@@ -71,22 +77,26 @@ body{
   left:0;
   width:100%;
   height:100%;
-  background:rgba(0,0,0,0.4);
-  display:none;
+  background:rgba(0,0,0,0.5);
+  backdrop-filter:blur(3px);
+  opacity:0;
+  visibility:hidden;
+  transition:0.3s;
   z-index:999;
 }
 
 .overlay.show{
-  display:block;
+  opacity:1;
+  visibility:visible;
 }
 
 /* MAIN */
 .main{
-  margin-left:250px;
+  margin-left:260px;
   transition:0.3s;
 }
 
-/* NAVBAR */
+/* NAV */
 nav{
   display:flex;
   justify-content:space-between;
@@ -97,14 +107,12 @@ nav{
   border-bottom:1px solid #e5e7eb;
 }
 
-/* MENU BTN */
 .menu-btn{
+  display:none;
   font-size:22px;
   cursor:pointer;
-  display:none;
 }
 
-/* SEARCH */
 .search-box{
   padding:10px 15px;
   border-radius:25px;
@@ -167,7 +175,6 @@ nav{
   gap:25px;
 }
 
-/* CARD */
 .card{
   background:white;
   padding:15px;
@@ -228,15 +235,26 @@ nav{
   }
 
   .sidebar{
-    left:-260px;
+    transform:translateX(-100%);
+    width:80%;
+    max-width:300px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.4);
   }
 
   .sidebar.show{
-    left:0;
+    transform:translateX(0);
+  }
+
+  .close-btn{
+    display:block;
   }
 
   .main{
     margin-left:0;
+  }
+
+  .search-box{
+    width:150px;
   }
 }
 </style>
@@ -249,12 +267,20 @@ nav{
 
 <!-- SIDEBAR -->
 <div class="sidebar" id="sidebar">
-  <h2>BONGO</h2>
-  <a href="shop.html">🏠 Dashboard</a>
-  <a href="cart.html">🛒 Cart</a>
-  <a href="orderhistory.html">📦 Orders</a>
-  <a href="payment.html">💳 Payment</a>
-  <a href="#" onclick="logout()">🚪 Logout</a>
+
+  <div class="sidebar-header">
+    <h2>BONGO</h2>
+    <span class="close-btn" onclick="toggleSidebar()">✖</span>
+  </div>
+
+  <div class="sidebar-links">
+    <a href="shop.html">🏠 Dashboard</a>
+    <a href="cart.html">🛒 Cart</a>
+    <a href="orderhistory.html">📦 Orders</a>
+    <a href="payment.html">💳 Payment</a>
+    <a href="#" onclick="logout()">🚪 Logout</a>
+  </div>
+
 </div>
 
 <!-- MAIN -->
@@ -289,13 +315,10 @@ const API_BASE="https://my-full-stack-ae3l.onrender.com/api";
 const username=localStorage.getItem("username");
 let allProducts=[];
 
-const sidebar=document.getElementById("sidebar");
-const overlay=document.getElementById("overlay");
-
-/* SIDEBAR TOGGLE */
+/* SIDEBAR */
 function toggleSidebar(){
-  sidebar.classList.toggle("show");
-  overlay.classList.toggle("show");
+  document.getElementById("sidebar").classList.toggle("show");
+  document.getElementById("overlay").classList.toggle("show");
 }
 
 /* INIT */
