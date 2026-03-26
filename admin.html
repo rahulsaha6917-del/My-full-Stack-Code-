@@ -82,13 +82,15 @@
   </div>
 
   <!-- Monthly Business -->
-  <div class="card section" id="businessMonthly">
-    <h3>Monthly Business Report</h3>
-    <input type="number" id="month" placeholder="Month (1-12)">
-    <input type="number" id="year" placeholder="Year">
-    <button onclick="loadMonthlyBusiness()">Check</button>
-    <div id="monthlyResult" class="business-cards"></div>
-  </div>
+<div id="deleteProduct" class="section" style="display:none">
+    <div class="card" style="border-top: 4px solid #ef4444;">
+        <h3 class="section-header" style="color:#ef4444">Remove from Inventory</h3>
+        <label>Product ID</label>
+        <input id="deleteId" type="number" style="margin-bottom:15px">
+        <button class="btn btn-danger" style="width:100%" onclick="deleteProduct()">Confirm Deletion</button>
+        <div id="deleteResult" class="result-box"></div>
+    </div>
+</div>
 
   <!-- Yearly Business -->
   <div class="card section" id="businessYearly">
