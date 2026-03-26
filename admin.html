@@ -114,16 +114,13 @@
   </div>
 
   <!-- Delete Product -->
-
- <div id="deleteProduct" class="section" style="display:none">
-    <div class="card" style="border-top: 4px solid #ef4444;">
-        <h3 class="section-header" style="color:#ef4444">Remove from Inventory</h3>
-        <label>Product ID</label>
-        <input id="deleteId" type="number" style="margin-bottom:15px">
-        <button class="btn btn-danger" style="width:100%" onclick="deleteProduct()">Confirm Deletion</button>
-        <div id="deleteResult" class="result-box"></div>
-    </div>
+<div class="card section" id="deleteProduct"> 
+ <h3>Delete Product</h3> 
+ <input id="deleteProductId" placeholder="Product ID"> 
+ <button onclick="deleteProduct()">Delete Product</button> 
 </div>
+
+ 
 
   <!-- Modify User -->
   <div class="card section" id="modifyUser">
