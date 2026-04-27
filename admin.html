@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -52,7 +51,6 @@ body{flex-direction:column}
 .sidebar a{flex:1;text-align:center}
 }
 </style>
-
 </head>
 
 <body>
@@ -76,7 +74,6 @@ Dashboard
 </div>
 
 <!-- Daily -->
-
 <div class="card section" id="businessDaily">
 <h3>Daily Business</h3>
 <input type="date" id="dailyDate">
@@ -85,7 +82,6 @@ Dashboard
 </div>
 
 <!-- Monthly -->
-
 <div class="card section" id="businessMonthly">
 <h3>Monthly Business</h3>
 <input type="number" id="month" placeholder="Month (1-12)">
@@ -95,7 +91,6 @@ Dashboard
 </div>
 
 <!-- Yearly -->
-
 <div class="card section" id="businessYearly">
 <h3>Yearly Business</h3>
 <input type="number" id="yearlyYear" placeholder="Year">
@@ -104,7 +99,6 @@ Dashboard
 </div>
 
 <!-- Add Product -->
-
 <div class="card section" id="addProduct">
 <h3>Add Product</h3>
 <input id="pname" placeholder="Name">
@@ -118,27 +112,28 @@ Dashboard
 </div>
 
 <!-- Delete Product -->
-
 <div class="card section" id="deleteProduct">
 <h3>Delete Product</h3>
 <input id="deleteProductId" placeholder="Product ID">
 <button onclick="deleteProduct()">Delete</button>
 </div>
 
-<!-- Modify User -->
-
+<!-- Modify User (UPDATED) -->
 <div class="card section" id="modifyUser">
 <h3>Modify User</h3>
-<input id="userId" placeholder="User ID">
+
+<input id="userId" placeholder="Enter User ID">
+<button onclick="loadUser()">Load User</button>
+
 <input id="username" placeholder="Username">
 <input id="email" placeholder="Email">
 <input id="role" placeholder="Role">
+
 <button onclick="modifyUser()">Update</button>
 <p id="userMsg"></p>
 </div>
 
 <!-- Orders -->
-
 <div class="card section" id="orders">
 <h3>Orders</h3>
 <button onclick="loadOrders()">Load</button>
@@ -148,7 +143,6 @@ Dashboard
 <th>ID</th>
 <th>User</th>
 <th>Total</th>
-
 <th>Status</th>
 <th>Delete</th>
 </tr>
@@ -229,7 +223,37 @@ body:JSON.stringify({productId:id})
 alert(res.ok?"Deleted Successfully":"Delete Failed");
 }
 
-/* User */
+/* ✅ NEW: Load User */
+async function loadUser(){
+const id=userId.value;
+
+if(!id){
+alert("Enter User ID");
+return;
+}
+
+try{
+const res=await fetch(API+"/admin/users/"+id);
+
+if(!res.ok){
+userMsg.innerText="User not found ❌";
+return;
+}
+
+const user=await res.json();
+
+username.value=user.username || "";
+email.value=user.email || "";
+role.value=user.role || "";
+
+userMsg.innerText="User Loaded ✅";
+
+}catch(err){
+userMsg.innerText="Error loading user ❌";
+}
+}
+
+/* Update User */
 async function modifyUser(){
 const body={
 userId:userId.value,
@@ -237,8 +261,14 @@ username:username.value,
 email:email.value,
 role:role.value
 };
-await fetch(API+"/admin/users/modify",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
-userMsg.innerText="Updated";
+
+await fetch(API+"/admin/users/modify",{
+method:"PUT",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify(body)
+});
+
+userMsg.innerText="Updated ✅";
 }
 
 /* Orders */
@@ -255,8 +285,6 @@ ordersTable.innerHTML=data.map(o=>`
 <td><button class="deleteBtn" onclick="deleteOrder('${o.order_id}')">X</button></td>
 </tr>`).join('');
 }
-
-
 
 async function deleteOrder(id){
 await fetch(API+"/admin/orders/delete/"+id,{method:"DELETE"});
