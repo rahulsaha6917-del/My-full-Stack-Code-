@@ -148,7 +148,7 @@ Dashboard
 <th>ID</th>
 <th>User</th>
 <th>Total</th>
-<th>Time</th>
+
 <th>Status</th>
 <th>Delete</th>
 </tr>
@@ -256,24 +256,7 @@ ordersTable.innerHTML=data.map(o=>`
 </tr>`).join('');
 }
 
-// Time Format
-let time = o.created_at 
-? new Date(o.created_at).toLocaleString() 
-: "N/A";
 
-return `
-<tr>
-<td>${o.order_id}</td>
-<td>${o.user_id}</td>
-<td>${products}</td>
-<td>₹${o.total_amount}</td>
-<td>${time}</td>
-<td>${o.status}</td>
-<td><button class="deleteBtn" onclick="deleteOrder('${o.order_id}')">X</button></td>
-</tr>
-`;
-}).join('');
-}
 
 async function deleteOrder(id){
 await fetch(API+"/admin/orders/delete/"+id,{method:"DELETE"});
