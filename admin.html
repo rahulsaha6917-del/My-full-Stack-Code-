@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -52,7 +51,6 @@ body{flex-direction:column}
 .sidebar a{flex:1;text-align:center}
 }
 </style>
-
 </head>
 
 <body>
@@ -75,84 +73,24 @@ Dashboard
 <button onclick="logout()">Logout</button>
 </div>
 
-<!-- Daily -->
-
-<div class="card section" id="businessDaily">
-<h3>Daily Business</h3>
-<input type="date" id="dailyDate">
-<button onclick="loadDailyBusiness()">Check</button>
-<div id="dailyResult" class="business-cards"></div>
-</div>
-
-<!-- Monthly -->
-
-<div class="card section" id="businessMonthly">
-<h3>Monthly Business</h3>
-<input type="number" id="month" placeholder="Month (1-12)">
-<input type="number" id="year" placeholder="Year">
-<button onclick="loadMonthlyBusiness()">Check</button>
-<div id="monthlyResult" class="business-cards"></div>
-</div>
-
-<!-- Yearly -->
-
-<div class="card section" id="businessYearly">
-<h3>Yearly Business</h3>
-<input type="number" id="yearlyYear" placeholder="Year">
-<button onclick="loadYearlyBusiness()">Check</button>
-<div id="yearlyResult" class="business-cards"></div>
-</div>
-
-<!-- Add Product -->
-
-<div class="card section" id="addProduct">
-<h3>Add Product</h3>
-<input id="pname" placeholder="Name">
-<input id="pdesc" placeholder="Description">
-<input id="pprice" placeholder="Price">
-<input id="pstock" placeholder="Stock">
-<input id="pcategory" placeholder="Category ID">
-<input id="pimage" placeholder="Image URL">
-<button onclick="addProduct()">Add</button>
-<p id="addProductMsg"></p>
-</div>
-
-<!-- Delete Product -->
-
-<div class="card section" id="deleteProduct">
-<h3>Delete Product</h3>
-<input id="deleteProductId" placeholder="Product ID">
-<button onclick="deleteProduct()">Delete</button>
-</div>
-
-<!-- Modify User -->
-
-<div class="card section" id="modifyUser">
-<h3>Modify User</h3>
-<input id="userId" placeholder="User ID">
-<input id="username" placeholder="Username">
-<input id="email" placeholder="Email">
-<input id="role" placeholder="Role">
-<button onclick="modifyUser()">Update</button>
-<p id="userMsg"></p>
-</div>
-
 <!-- Orders -->
-
 <div class="card section" id="orders">
 <h3>Orders</h3>
 <button onclick="loadOrders()">Load</button>
+
 <table>
 <thead>
 <tr>
 <th>ID</th>
 <th>User</th>
+<th>Products</th>
 <th>Total</th>
-
+<th>Time</th>
 <th>Status</th>
 <th>Delete</th>
 </tr>
 </thead>
+
 <tbody id="ordersTable"></tbody>
 </table>
 </div>
@@ -166,98 +104,41 @@ function showSection(id){
 document.querySelectorAll('.section').forEach(s=>s.style.display='none');
 document.getElementById(id).style.display='block';
 }
-showSection('businessDaily');
+showSection('orders');
 
-/* Business */
-function showCards(data,id){
-const c=document.getElementById(id);
-c.innerHTML="";
-
-c.innerHTML+=`<div class="business-card"><h4>Total</h4><p>₹${data.totalBusiness}</p></div>`;
-
-for(let k in data.categorySales){
-c.innerHTML+=`<div class="business-card"><h4>${k}</h4><p>${data.categorySales[k]} sold</p></div>`;
-}
-}
-
-async function loadDailyBusiness(){
-const d=document.getElementById("dailyDate").value;
-if(!d)return alert("Select date");
-const res=await fetch(API+"/admin/business/daily?date="+d);
-showCards(await res.json(),'dailyResult');
-}
-
-async function loadMonthlyBusiness(){
-const m=document.getElementById("month").value;
-const y=document.getElementById("year").value;
-if(!m||!y)return alert("Enter month & year");
-const res=await fetch(API+`/admin/business/monthly?month=${m}&year=${y}`);
-showCards(await res.json(),'monthlyResult');
-}
-
-async function loadYearlyBusiness(){
-const y=document.getElementById("yearlyYear").value;
-if(!y)return alert("Enter year");
-const res=await fetch(API+"/admin/business/yearly?year="+y);
-showCards(await res.json(),'yearlyResult');
-}
-
-/* Product */
-async function addProduct(){
-const body={
-name:pname.value,
-description:pdesc.value,
-price:pprice.value,
-stock:pstock.value,
-categoryId:pcategory.value,
-imageUrl:pimage.value
-};
-const res=await fetch(API+"/admin/products/add",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
-addProductMsg.innerText=await res.text();
-}
-
-async function deleteProduct(){
-const id=deleteProductId.value;
-if(!id)return alert("Enter Product ID");
-
-const res=await fetch(API+"/admin/products/delete",{
-method:"DELETE",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({productId:id})
-});
-
-alert(res.ok?"Deleted Successfully":"Delete Failed");
-}
-
-/* User */
-async function modifyUser(){
-const body={
-userId:userId.value,
-username:username.value,
-email:email.value,
-role:role.value
-};
-await fetch(API+"/admin/users/modify",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
-userMsg.innerText="Updated";
-}
-
-/* Orders */
+/* Load Orders with Product Name + Time */
 async function loadOrders(){
 const res=await fetch(API+"/admin/orders/all");
 const data=await res.json();
 
-ordersTable.innerHTML=data.map(o=>`
+ordersTable.innerHTML=data.map(o=>{
+
+// Product List
+let products = "N/A";
+if(o.products && o.products.length){
+products = o.products.map(p => `${p.name} (x${p.quantity})`).join("<br>");
+}
+
+// Time Format
+let time = o.created_at 
+? new Date(o.created_at).toLocaleString() 
+: "N/A";
+
+return `
 <tr>
 <td>${o.order_id}</td>
 <td>${o.user_id}</td>
+<td>${products}</td>
 <td>₹${o.total_amount}</td>
+<td>${time}</td>
 <td>${o.status}</td>
 <td><button class="deleteBtn" onclick="deleteOrder('${o.order_id}')">X</button></td>
-</tr>`).join('');
+</tr>
+`;
+}).join('');
 }
 
-
-
+/* Delete Order */
 async function deleteOrder(id){
 await fetch(API+"/admin/orders/delete/"+id,{method:"DELETE"});
 loadOrders();
