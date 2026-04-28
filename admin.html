@@ -144,7 +144,6 @@ Dashboard
 <th>ID</th>
 <th>User ID</th>
 <th>Username</th>
-<th>Items</th> <!-- ✅ NEW -->
 <th>Total</th>
 <th>Status</th>
 <th>Delete</th>
@@ -164,9 +163,107 @@ function showSection(id){
 document.querySelectorAll('.section').forEach(s=>s.style.display='none');
 document.getElementById(id).style.display='block';
 }
-showSection('orders');
+showSection('businessDaily');
 
-/* ✅ FINAL ORDERS FUNCTION */
+/* Business */
+function showCards(data,id){
+const c=document.getElementById(id);
+c.innerHTML="";
+c.innerHTML+=`<div class="business-card"><h4>Total</h4><p>₹${data.totalBusiness}</p></div>`;
+for(let k in data.categorySales){
+c.innerHTML+=`<div class="business-card"><h4>${k}</h4><p>${data.categorySales[k]} sold</p></div>`;
+}
+}
+
+async function loadDailyBusiness(){
+const d=document.getElementById("dailyDate").value;
+if(!d)return alert("Select date");
+const res=await fetch(API+"/admin/business/daily?date="+d);
+showCards(await res.json(),'dailyResult');
+}
+
+async function loadMonthlyBusiness(){
+const m=document.getElementById("month").value;
+const y=document.getElementById("year").value;
+if(!m||!y)return alert("Enter month & year");
+const res=await fetch(API+`/admin/business/monthly?month=${m}&year=${y}`);
+showCards(await res.json(),'monthlyResult');
+}
+
+async function loadYearlyBusiness(){
+const y=document.getElementById("yearlyYear").value;
+if(!y)return alert("Enter year");
+const res=await fetch(API+"/admin/business/yearly?year="+y);
+showCards(await res.json(),'yearlyResult');
+}
+
+/* Product */
+async function addProduct(){
+const body={
+name:pname.value,
+description:pdesc.value,
+price:pprice.value,
+stock:pstock.value,
+categoryId:pcategory.value,
+imageUrl:pimage.value
+};
+const res=await fetch(API+"/admin/products/add",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+addProductMsg.innerText=await res.text();
+}
+
+async function deleteProduct(){
+const id=deleteProductId.value;
+if(!id)return alert("Enter Product ID");
+
+const res=await fetch(API+"/admin/products/delete",{
+method:"DELETE",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({productId:id})
+});
+
+alert(res.ok?"Deleted Successfully":"Delete Failed");
+}
+
+/* Load User */
+async function loadUser(){
+const id=userId.value;
+if(!id)return alert("Enter User ID");
+
+try{
+const res=await fetch(API+"/admin/users/"+id);
+if(!res.ok){ userMsg.innerText="User not found ❌"; return; }
+
+const user=await res.json();
+username.value=user.username || "";
+email.value=user.email || "";
+role.value=user.role || "";
+
+userMsg.innerText="User Loaded ✅";
+
+}catch{
+userMsg.innerText="Error loading user ❌";
+}
+}
+
+/* Update User */
+async function modifyUser(){
+const body={
+userId:userId.value,
+username:username.value,
+email:email.value,
+role:role.value
+};
+
+await fetch(API+"/admin/users/modify",{
+method:"PUT",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify(body)
+});
+
+userMsg.innerText="Updated ✅";
+}
+
+/* ✅ Orders with separate User ID & Username */
 async function loadOrders(){
 const res=await fetch(API+"/admin/orders/all");
 const data=await res.json();
@@ -174,23 +271,13 @@ const data=await res.json();
 const rows = await Promise.all(data.map(async (o) => {
 
 let username="Unknown";
-let itemCount=0;
 
 try{
-/* username */
 const userRes=await fetch(API+"/admin/users/"+o.user_id);
 if(userRes.ok){
 const user=await userRes.json();
 username=user.username;
 }
-
-/* item count */
-const itemRes=await fetch(API+"/admin/orders/items/"+o.order_id);
-if(itemRes.ok){
-const items=await itemRes.json();
-itemCount=items.length;
-}
-
 }catch{}
 
 return `
@@ -198,7 +285,6 @@ return `
 <td>${o.order_id}</td>
 <td>${o.user_id}</td>
 <td>${username}</td>
-<td>${itemCount}</td>
 <td>₹${o.total_amount}</td>
 <td>${o.status}</td>
 <td><button class="deleteBtn" onclick="deleteOrder('${o.order_id}')">X</button></td>
