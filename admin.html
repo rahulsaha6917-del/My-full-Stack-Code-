@@ -44,6 +44,9 @@ th{background:#4b6cb7;color:white}
 .business-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;margin-top:20px}
 .business-card{background:linear-gradient(135deg,#6a11cb,#2575fc);color:white;padding:15px;border-radius:12px}
 
+/* Small text for user ID */
+td small{color:#888;font-size:12px}
+
 /* Responsive */
 @media(max-width:768px){
 body{flex-direction:column}
@@ -118,7 +121,7 @@ Dashboard
 <button onclick="deleteProduct()">Delete</button>
 </div>
 
-<!-- Modify User (UPDATED) -->
+<!-- Modify User -->
 <div class="card section" id="modifyUser">
 <h3>Modify User</h3>
 
@@ -166,9 +169,7 @@ showSection('businessDaily');
 function showCards(data,id){
 const c=document.getElementById(id);
 c.innerHTML="";
-
 c.innerHTML+=`<div class="business-card"><h4>Total</h4><p>₹${data.totalBusiness}</p></div>`;
-
 for(let k in data.categorySales){
 c.innerHTML+=`<div class="business-card"><h4>${k}</h4><p>${data.categorySales[k]} sold</p></div>`;
 }
@@ -223,32 +224,23 @@ body:JSON.stringify({productId:id})
 alert(res.ok?"Deleted Successfully":"Delete Failed");
 }
 
-/* ✅ NEW: Load User */
+/* Load User */
 async function loadUser(){
 const id=userId.value;
-
-if(!id){
-alert("Enter User ID");
-return;
-}
+if(!id)return alert("Enter User ID");
 
 try{
 const res=await fetch(API+"/admin/users/"+id);
-
-if(!res.ok){
-userMsg.innerText="User not found ❌";
-return;
-}
+if(!res.ok){ userMsg.innerText="User not found ❌"; return; }
 
 const user=await res.json();
-
 username.value=user.username || "";
 email.value=user.email || "";
 role.value=user.role || "";
 
 userMsg.innerText="User Loaded ✅";
 
-}catch(err){
+}catch{
 userMsg.innerText="Error loading user ❌";
 }
 }
@@ -271,19 +263,33 @@ body:JSON.stringify(body)
 userMsg.innerText="Updated ✅";
 }
 
-/* Orders */
+/* ✅ Orders with Username + User ID */
 async function loadOrders(){
 const res=await fetch(API+"/admin/orders/all");
 const data=await res.json();
 
-ordersTable.innerHTML=data.map(o=>`
+const rows = await Promise.all(data.map(async (o) => {
+let username="Unknown";
+
+try{
+const userRes=await fetch(API+"/admin/users/"+o.user_id);
+if(userRes.ok){
+const user=await userRes.json();
+username=user.username;
+}
+}catch{}
+
+return `
 <tr>
 <td>${o.order_id}</td>
-<td>${o.user_id}</td>
+<td><b>${username}</b><br><small>ID: ${o.user_id}</small></td>
 <td>₹${o.total_amount}</td>
 <td>${o.status}</td>
 <td><button class="deleteBtn" onclick="deleteOrder('${o.order_id}')">X</button></td>
-</tr>`).join('');
+</tr>`;
+}));
+
+ordersTable.innerHTML=rows.join('');
 }
 
 async function deleteOrder(id){
