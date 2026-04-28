@@ -90,13 +90,23 @@ Dashboard
 <div id="monthlyResult" class="business-cards"></div>
 </div>
 
-<!-- Yearly -->
+<!-- ✅ UPDATED Yearly -->
 <div class="card section" id="businessYearly">
-<h3>Yearly Business</h3>
+<h3>Yearly Business (Month-wise)</h3>
 <input type="number" id="yearlyYear" placeholder="Year">
 <button onclick="loadYearlyBusiness()">Check</button>
-<div id="yearlyResult" class="business-cards"></div>
+
+<table>
+<thead>
+<tr>
+<th>Month</th>
+<th>Total Business</th>
+</tr>
+</thead>
+<tbody id="yearlyResult"></tbody>
+</table>
 </div>
+
 
 <!-- Add Product -->
 <div class="card section" id="addProduct">
@@ -190,11 +200,25 @@ const res=await fetch(API+`/admin/business/monthly?month=${m}&year=${y}`);
 showCards(await res.json(),'monthlyResult');
 }
 
+/* ✅ UPDATED YEARLY */
 async function loadYearlyBusiness(){
 const y=document.getElementById("yearlyYear").value;
 if(!y)return alert("Enter year");
+
 const res=await fetch(API+"/admin/business/yearly?year="+y);
-showCards(await res.json(),'yearlyResult');
+const data=await res.json();
+
+const months=[
+"JANUARY","FEBRUARY","MARCH","APRIL","MAY","JUNE",
+"JULY","AUGUST","SEPTEMBER","OCTOBER","NOVEMBER","DECEMBER"
+];
+
+let rows="";
+months.forEach(m=>{
+rows+=`<tr><td>${m}</td><td>₹${data.monthlySales?.[m]||0}</td></tr>`;
+});
+
+yearlyResult.innerHTML=rows;
 }
 
 /* Product */
