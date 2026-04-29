@@ -3,141 +3,157 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Modern Admin Dashboard</title>
+<title>Bongo Admin Dashboard</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Roboto',sans-serif;display:flex;min-height:100vh;background:#f0f2f5}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Roboto;background:#f0f2f5;display:flex}
 
 /* Sidebar */
-.sidebar{width:250px;background:linear-gradient(180deg,#4b6cb7,#182848);color:white;display:flex;flex-direction:column;padding:20px}
-.sidebar h2{text-align:center;margin-bottom:40px}
-.sidebar a{color:white;text-decoration:none;padding:12px 15px;margin:5px 0;border-radius:8px;display:block;cursor:pointer;transition:.2s}
-.sidebar a:hover{background:rgba(255,255,255,0.15)}
+.sidebar{
+width:240px;
+background:linear-gradient(180deg,#4b6cb7,#182848);
+color:#fff;
+height:100vh;
+padding:20px;
+}
+.sidebar h2{text-align:center;margin-bottom:20px}
+.sidebar a{
+display:block;
+padding:10px;
+margin:5px 0;
+border-radius:6px;
+cursor:pointer;
+}
+.sidebar a:hover{background:rgba(255,255,255,0.2)}
 
 /* Main */
-.main{flex:1;padding:20px 30px}
-.main-header{font-size:28px;font-weight:700;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center}
+.main{flex:1;padding:20px}
 
 /* Card */
-.card{background:white;padding:20px;border-radius:12px;box-shadow:0 6px 15px rgba(0,0,0,0.1);margin-bottom:20px}
-.card:hover{transform:translateY(-5px)}
-.card h3{color:#4b6cb7;margin-bottom:15px}
+.card{
+background:#fff;
+padding:20px;
+margin-bottom:20px;
+border-radius:10px;
+box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
 
 /* Inputs */
-input{width:100%;padding:10px;margin:5px 0 15px;border-radius:6px;border:1px solid #ccc}
-button{padding:10px 20px;background:linear-gradient(90deg,#4b6cb7,#182848);border:none;color:white;border-radius:8px;cursor:pointer}
-button:hover{transform:translateY(-2px)}
+input{
+width:100%;
+padding:8px;
+margin:5px 0 10px;
+}
+
+/* Button */
+button{
+padding:8px 15px;
+background:#4b6cb7;
+color:#fff;
+border:none;
+border-radius:5px;
+cursor:pointer;
+}
+button:hover{background:#182848}
 
 /* Table */
-table{width:100%;border-collapse:collapse;margin-top:15px}
-th,td{border:1px solid #ddd;padding:10px;text-align:center}
-th{background:#4b6cb7;color:white}
-.deleteBtn{background:#e74c3c}
+table{width:100%;border-collapse:collapse;margin-top:10px}
+th,td{border:1px solid #ddd;padding:8px;text-align:center}
+th{background:#4b6cb7;color:#fff}
 
-/* Sections */
+.deleteBtn{background:red}
 .section{display:none}
-
-/* Business Cards */
-.business-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;margin-top:20px}
-.business-card{background:linear-gradient(135deg,#6a11cb,#2575fc);color:white;padding:15px;border-radius:12px}
-
-/* Responsive */
-@media(max-width:768px){
-body{flex-direction:column}
-.sidebar{width:100%;flex-direction:row;overflow-x:auto}
-.sidebar a{flex:1;text-align:center}
-}
 </style>
 </head>
 
 <body>
 
 <div class="sidebar">
-  <h2>Bongo Admin</h2>
-  <a onclick="showSection('businessDaily')">Daily</a>
-  <a onclick="showSection('businessMonthly')">Monthly</a>
-  <a onclick="showSection('businessYearly')">Yearly</a>
-  <a onclick="showSection('addProduct')">Add Product</a>
-  <a onclick="showSection('deleteProduct')">Delete Product</a>
-  <a onclick="showSection('modifyUser')">Users</a>
-  <a onclick="showSection('orders')">Orders</a>
+<h2>Bongo Admin</h2>
+
+<a onclick="show('dashboard')">Dashboard</a>
+<a onclick="show('products')">View Products</a>
+<a onclick="show('addProduct')">Add Product</a>
+<a onclick="show('deleteProduct')">Delete Product</a>
+<a onclick="show('users')">Users</a>
+<a onclick="show('orders')">Orders</a>
+<a onclick="show('business')">Business</a>
+
 </div>
 
 <div class="main">
 
-<div class="main-header">
-Dashboard
-<button onclick="logout()">Logout</button>
+<div class="card section" id="dashboard">
+<h2>Dashboard</h2>
+<p>Welcome Admin 👋</p>
 </div>
 
-<!-- Daily -->
-<div class="card section" id="businessDaily">
-<h3>Daily Business</h3>
-<input type="date" id="dailyDate">
-<button onclick="loadDailyBusiness()">Check</button>
-<div id="dailyResult" class="business-cards"></div>
+<!-- PRODUCTS -->
+<div class="card section" id="products">
+<h3>All Products</h3>
+<button onclick="loadProducts()">Load Products</button>
+
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Description</th>
+<th>Price</th>
+<th>Stock</th>
+<th>Category</th>
+<th>Image</th>
+</tr>
+</thead>
+
+<tbody id="productTable"></tbody>
+</table>
 </div>
 
-<!-- Monthly -->
-<div class="card section" id="businessMonthly">
-<h3>Monthly Business</h3>
-<input type="number" id="month" placeholder="Month (1-12)">
-<input type="number" id="year" placeholder="Year">
-<button onclick="loadMonthlyBusiness()">Check</button>
-<div id="monthlyResult" class="business-cards"></div>
-</div>
-
-<!-- Yearly -->
-<div class="card section" id="businessYearly">
-<h3>Yearly Business</h3>
-<input type="number" id="yearlyYear" placeholder="Year">
-<button onclick="loadYearlyBusiness()">Check</button>
-<div id="yearlyResult" class="business-cards"></div>
-</div>
-
-
-<!-- Add Product -->
+<!-- ADD PRODUCT -->
 <div class="card section" id="addProduct">
 <h3>Add Product</h3>
+
 <input id="pname" placeholder="Name">
 <input id="pdesc" placeholder="Description">
 <input id="pprice" placeholder="Price">
 <input id="pstock" placeholder="Stock">
 <input id="pcategory" placeholder="Category ID">
 <input id="pimage" placeholder="Image URL">
+
 <button onclick="addProduct()">Add</button>
-<p id="addProductMsg"></p>
+<p id="msg"></p>
 </div>
 
-<!-- Delete Product -->
+<!-- DELETE PRODUCT -->
 <div class="card section" id="deleteProduct">
 <h3>Delete Product</h3>
-<input id="deleteProductId" placeholder="Product ID">
+<input id="deleteId" placeholder="Product ID">
 <button onclick="deleteProduct()">Delete</button>
 </div>
 
-<!-- Modify User -->
-<div class="card section" id="modifyUser">
-<h3>Modify User</h3>
+<!-- USERS -->
+<div class="card section" id="users">
+<h3>Users</h3>
 
-<input id="userId" placeholder="Enter User ID">
-<button onclick="loadUser()">Load User</button>
+<input id="uid" placeholder="User ID">
+<button onclick="loadUser()">Load</button>
 
-<input id="username" placeholder="Username">
-<input id="email" placeholder="Email">
-<input id="role" placeholder="Role">
+<input id="uname" placeholder="Username">
+<input id="uemail" placeholder="Email">
+<input id="urole" placeholder="Role">
 
-<button onclick="modifyUser()">Update</button>
+<button onclick="updateUser()">Update</button>
 <p id="userMsg"></p>
 </div>
 
-<!-- Orders -->
+<!-- ORDERS -->
 <div class="card section" id="orders">
 <h3>Orders</h3>
-<button onclick="loadOrders()">Load</button>
+<button onclick="loadOrders()">Load Orders</button>
 
 <table>
 <thead>
@@ -155,49 +171,54 @@ Dashboard
 </table>
 </div>
 
+<!-- BUSINESS -->
+<div class="card section" id="business">
+<h3>Business</h3>
+
+<input type="date" id="date">
+<button onclick="daily()">Daily</button>
+
+<input id="month" placeholder="Month">
+<input id="year" placeholder="Year">
+<button onclick="monthly()">Monthly</button>
+
+<input id="year2" placeholder="Year">
+<button onclick="yearly()">Yearly</button>
+
+<div id="result"></div>
+</div>
+
 </div>
 
 <script>
+
 const API="https://my-full-stack-ae3l.onrender.com";
 
-function showSection(id){
+/* Navigation */
+function show(id){
 document.querySelectorAll('.section').forEach(s=>s.style.display='none');
 document.getElementById(id).style.display='block';
 }
-showSection('businessDaily');
+show('dashboard');
 
-/* Business */
-function showCards(data,id){
-const c=document.getElementById(id);
-c.innerHTML="";
-c.innerHTML+=`<div class="business-card"><h4>Total</h4><p>₹${data.totalBusiness}</p></div>`;
-for(let k in data.categorySales){
-c.innerHTML+=`<div class="business-card"><h4>${k}</h4><p>${data.categorySales[k]} sold</p></div>`;
-}
-}
+/* PRODUCTS */
+async function loadProducts(){
+const res=await fetch(API+"/products");
+const data=await res.json();
 
-async function loadDailyBusiness(){
-const d=document.getElementById("dailyDate").value;
-if(!d)return alert("Select date");
-const res=await fetch(API+"/admin/business/daily?date="+d);
-showCards(await res.json(),'dailyResult');
-}
-
-async function loadMonthlyBusiness(){
-const m=document.getElementById("month").value;
-const y=document.getElementById("year").value;
-if(!m||!y)return alert("Enter month & year");
-const res=await fetch(API+`/admin/business/monthly?month=${m}&year=${y}`);
-showCards(await res.json(),'monthlyResult');
+productTable.innerHTML=data.map(p=>`
+<tr>
+<td>${p.product_id}</td>
+<td>${p.name}</td>
+<td>${p.description}</td>
+<td>₹${p.price}</td>
+<td>${p.stock}</td>
+<td>${p.category_id}</td>
+<td><img src="${p.image_url}" width="50"/></td>
+</tr>`).join('');
 }
 
-async function loadYearlyBusiness(){
-const y=document.getElementById("yearlyYear").value;
-if(!y)return alert("Enter year");
-const res=await fetch(API+"/admin/business/yearly?year="+y);
-showCards(await res.json(),'yearlyResult');
-}
-/* Product */
+/* ADD PRODUCT */
 async function addProduct(){
 const body={
 name:pname.value,
@@ -207,103 +228,102 @@ stock:pstock.value,
 categoryId:pcategory.value,
 imageUrl:pimage.value
 };
-const res=await fetch(API+"/admin/products/add",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
-addProductMsg.innerText=await res.text();
-}
 
-async function deleteProduct(){
-const id=deleteProductId.value;
-if(!id)return alert("Enter Product ID");
-
-const res=await fetch(API+"/admin/products/delete",{
-method:"DELETE",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({productId:id})
-});
-
-alert(res.ok?"Deleted Successfully":"Delete Failed");
-}
-
-/* Load User */
-async function loadUser(){
-const id=userId.value;
-if(!id)return alert("Enter User ID");
-
-try{
-const res=await fetch(API+"/admin/users/"+id);
-if(!res.ok){ userMsg.innerText="User not found ❌"; return; }
-
-const user=await res.json();
-username.value=user.username || "";
-email.value=user.email || "";
-role.value=user.role || "";
-
-userMsg.innerText="User Loaded ✅";
-
-}catch{
-userMsg.innerText="Error loading user ❌";
-}
-}
-
-/* Update User */
-async function modifyUser(){
-const body={
-userId:userId.value,
-username:username.value,
-email:email.value,
-role:role.value
-};
-
-await fetch(API+"/admin/users/modify",{
-method:"PUT",
+const res=await fetch(API+"/admin/products/add",{
+method:"POST",
 headers:{"Content-Type":"application/json"},
 body:JSON.stringify(body)
 });
 
-userMsg.innerText="Updated ✅";
+msg.innerText=await res.text();
 }
 
-/* ✅ Orders with separate User ID & Username */
+/* DELETE PRODUCT */
+async function deleteProduct(){
+await fetch(API+"/admin/products/delete",{
+method:"DELETE",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({productId:deleteId.value})
+});
+alert("Deleted");
+}
+
+/* USERS */
+async function loadUser(){
+const res=await fetch(API+"/admin/users/"+uid.value);
+const u=await res.json();
+
+uname.value=u.username;
+uemail.value=u.email;
+urole.value=u.role;
+}
+
+async function updateUser(){
+await fetch(API+"/admin/users/modify",{
+method:"PUT",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+userId:uid.value,
+username:uname.value,
+email:uemail.value,
+role:urole.value
+})
+});
+userMsg.innerText="Updated";
+}
+
+/* ORDERS */
 async function loadOrders(){
 const res=await fetch(API+"/admin/orders/all");
 const data=await res.json();
 
-const rows = await Promise.all(data.map(async (o) => {
-
-let username="Unknown";
+const rows=await Promise.all(data.map(async o=>{
+let name="Unknown";
 
 try{
-const userRes=await fetch(API+"/admin/users/"+o.user_id);
-if(userRes.ok){
-const user=await userRes.json();
-username=user.username;
-}
+const u=await fetch(API+"/admin/users/"+o.user_id);
+const user=await u.json();
+name=user.username;
 }catch{}
 
 return `
 <tr>
 <td>${o.order_id}</td>
 <td>${o.user_id}</td>
-<td>${username}</td>
+<td>${name}</td>
 <td>₹${o.total_amount}</td>
 <td>${o.status}</td>
-<td><button class="deleteBtn" onclick="deleteOrder('${o.order_id}')">X</button></td>
+<td><button class="deleteBtn" onclick="delOrder(${o.order_id})">X</button></td>
 </tr>`;
 }));
 
 ordersTable.innerHTML=rows.join('');
 }
 
-async function deleteOrder(id){
+async function delOrder(id){
 await fetch(API+"/admin/orders/delete/"+id,{method:"DELETE"});
 loadOrders();
 }
 
-/* Logout */
-function logout(){
-localStorage.clear();
-window.location.href="login.html";
+/* BUSINESS */
+async function daily(){
+const res=await fetch(API+"/admin/business/daily?date="+date.value);
+const d=await res.json();
+result.innerHTML=`Total ₹${d.totalBusiness}`;
 }
+
+async function monthly(){
+const res=await fetch(API+`/admin/business/monthly?month=${month.value}&year=${year.value}`);
+const d=await res.json();
+result.innerHTML=`Total ₹${d.totalBusiness}`;
+}
+
+async function yearly(){
+const res=await fetch(API+"/admin/business/yearly?year="+year2.value);
+const d=await res.json();
+result.innerHTML=`Total ₹${d.totalBusiness}`;
+}
+
 </script>
 
 </body>
