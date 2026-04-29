@@ -212,54 +212,90 @@ nav{
 </div>
 
 <script>
-const API_BASE=" https://my-full-stack-ae3l.onrender.com/api";
+const API_BASE="https://my-full-stack-ae3l.onrender.com/api"; // ✅ fixed
 const currentUsername=localStorage.getItem("username");
+
 let allProducts=[];
 
+/* INIT */
 window.onload=function(){
   if(!currentUsername){
     window.location.href="login.html";
     return;
   }
   document.getElementById("username-display").innerText = "Hello, " + currentUsername;
+
   loadProducts();
   loadCategories();
   fetchCartCount();
 };
 
+/* PRODUCTS */
 async function loadProducts(){
-  const res=await fetch(API_BASE+"/products");
-  const data=await res.json();
-  allProducts=data.products||data;
-  renderProducts(allProducts);
+  try{
+    const res=await fetch(API_BASE+"/products");
+    const data=await res.json();
+
+    allProducts=data.products || data;
+    renderProducts(allProducts);
+
+  }catch(err){
+    console.error("Product load error:", err);
+  }
 }
 
+/* SEARCH */
 function searchProducts(q){
-  renderProducts(allProducts.filter(p=>p.name.toLowerCase().includes(q.toLowerCase())));
+  renderProducts(
+    allProducts.filter(p =>
+      p.name.toLowerCase().includes(q.toLowerCase())
+    )
+  );
 }
 
+/* CATEGORIES */
 async function loadCategories(){
-  const res=await fetch(API_BASE+"/categories");
-  const data=await res.json();
-  const bar=document.getElementById("category-bar");
-  bar.innerHTML='<button class="category-btn" onclick="renderProducts(allProducts)">All</button>';
+  try{
+    const res=await fetch(API_BASE+"/categories");
+    const data=await res.json();
 
-  data.forEach(cat=>{
-    const btn=document.createElement("button");
-    btn.className="category-btn";
-    btn.innerText=cat.category_name;
-    btn.onclick=()=>renderProducts(allProducts.filter(p=>p.category===cat.category_name));
-    bar.appendChild(btn);
-  });
+    const bar=document.getElementById("category-bar");
+
+    bar.innerHTML='<button class="category-btn" onclick="renderProducts(allProducts)">All</button>';
+
+    data.forEach(cat=>{
+      const btn=document.createElement("button");
+      btn.className="category-btn";
+      btn.innerText=cat.category_name;
+
+      btn.onclick=()=>{
+        renderProducts(
+          allProducts.filter(p => p.category_id == cat.category_id)
+        );
+      };
+
+      bar.appendChild(btn);
+    });
+
+  }catch(err){
+    console.error("Category load error:", err);
+  }
 }
 
+/* RENDER */
 function renderProducts(products){
   const grid=document.getElementById("grid");
-  if(!products.length){grid.innerHTML="No products";return;}
+
+  if(!products.length){
+    grid.innerHTML="No products";
+    return;
+  }
 
   grid.innerHTML=products.map(p=>`
     <div class="card">
-      <div class="img-box"><img src="${p.images?.[0]||'https://via.placeholder.com/150'}"></div>
+      <div class="img-box">
+        <img src="${p.image_url || 'https://via.placeholder.com/150'}">
+      </div>
       <h4>${p.name}</h4>
       <div class="price">₹${p.price}</div>
       <button class="add-btn" onclick="addToCart(${p.product_id})">Add</button>
@@ -267,21 +303,39 @@ function renderProducts(products){
   `).join("");
 }
 
+/* CART */
 async function addToCart(productId){
-  await fetch(API_BASE+"/cart/add",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({username:currentUsername,productId,quantity:1})
-  });
-  fetchCartCount();
+  try{
+    await fetch(API_BASE+"/cart/add",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        username:currentUsername,
+        productId,
+        quantity:1
+      })
+    });
+
+    fetchCartCount();
+
+  }catch(err){
+    console.error("Cart error:", err);
+  }
 }
 
 async function fetchCartCount(){
-  const res=await fetch(API_BASE+"/cart/items/count?username="+currentUsername);
-  const count=await res.json();
-  document.getElementById("cart-count").innerText=count;
+  try{
+    const res=await fetch(API_BASE+"/cart/items/count?username="+currentUsername);
+    const count=await res.json();
+
+    document.getElementById("cart-count").innerText=count;
+
+  }catch(err){
+    console.error("Cart count error:", err);
+  }
 }
 
+/* LOGOUT */
 function logout(){
   localStorage.clear();
   window.location.href="login.html";
