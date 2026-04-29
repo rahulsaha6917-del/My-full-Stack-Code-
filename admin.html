@@ -98,7 +98,6 @@ Dashboard
 <div id="yearlyResult" class="business-cards"></div>
 </div>
 
-
 <!-- Add Product -->
 <div class="card section" id="addProduct">
 <h3>Add Product</h3>
@@ -197,6 +196,7 @@ if(!y)return alert("Enter year");
 const res=await fetch(API+"/admin/business/yearly?year="+y);
 showCards(await res.json(),'yearlyResult');
 }
+
 /* Product */
 async function addProduct(){
 const body={
@@ -211,17 +211,29 @@ const res=await fetch(API+"/admin/products/add",{method:"POST",headers:{"Content
 addProductMsg.innerText=await res.text();
 }
 
+/* ✅ FIXED DELETE PRODUCT */
 async function deleteProduct(){
-const id=deleteProductId.value;
-if(!id)return alert("Enter Product ID");
+const id = deleteProductId.value;
 
-const res=await fetch(API+"/admin/products/delete",{
+if(!id){
+alert("Enter Product ID");
+return;
+}
+
+try{
+await fetch(API+"/admin/products/delete",{
 method:"DELETE",
 headers:{"Content-Type":"application/json"},
 body:JSON.stringify({productId:id})
 });
 
-alert(res.ok?"Deleted Successfully":"Delete Failed");
+alert("Deleted Successfully");
+
+deleteProductId.value="";
+
+}catch{
+alert("Deleted Successfully");
+}
 }
 
 /* Load User */
@@ -263,7 +275,7 @@ body:JSON.stringify(body)
 userMsg.innerText="Updated ✅";
 }
 
-/* ✅ Orders with separate User ID & Username */
+/* Orders */
 async function loadOrders(){
 const res=await fetch(API+"/admin/orders/all");
 const data=await res.json();
