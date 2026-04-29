@@ -159,164 +159,183 @@ Dashboard
 <script>
 const API="https://my-full-stack-ae3l.onrender.com";
 
-function showSection(id){
-document.querySelectorAll('.section').forEach(s=>s.style.display='none');
-document.getElementById(id).style.display='block';
-}
-showSection('businessDaily');
+window.onload = () => {
+            const userName = localStorage.getItem("user") || "Admin";
+            document.getElementById("admin-display-name").innerText = `${userName} (Admin)`;
+        };
 
-/* Business */
-function showCards(data,id){
-const c=document.getElementById(id);
-c.innerHTML="";
-c.innerHTML+=`<div class="business-card"><h4>Total</h4><p>₹${data.totalBusiness}</p></div>`;
-for(let k in data.categorySales){
-c.innerHTML+=`<div class="business-card"><h4>${k}</h4><p>${data.categorySales[k]} sold</p></div>`;
-}
-}
+        function toggleSidebar() {
+            document.getElementById("sidebar").classList.toggle("active");
+            document.getElementById("overlay").classList.toggle("active");
+        }
 
-async function loadDailyBusiness(){
-const d=document.getElementById("dailyDate").value;
-if(!d)return alert("Select date");
-const res=await fetch(API+"/admin/business/daily?date="+d);
-showCards(await res.json(),'dailyResult');
-}
+        function showSection(id, btn) {
+            document.querySelectorAll(".section").forEach(s => s.style.display = "none");
+            document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+            document.getElementById(id).style.display = "block";
+            btn.classList.add("active");
+            
+            // Auto-hide sidebar on mobile after clicking a menu item
+            if(window.innerWidth <= 1024) {
+                document.getElementById("sidebar").classList.remove("active");
+                document.getElementById("overlay").classList.remove("active");
+            }
+            
+            document.getElementById("page-title").innerText = btn.innerText.replace(/[^\w\s]/gi, '').trim();
+            if (id === 'orders') fetchOrders();
+        }
 
-async function loadMonthlyBusiness(){
-const m=document.getElementById("month").value;
-const y=document.getElementById("year").value;
-if(!m||!y)return alert("Enter month & year");
-const res=await fetch(API+`/admin/business/monthly?month=${m}&year=${y}`);
-showCards(await res.json(),'monthlyResult');
-}
+        function logout() {
+            if (confirm("Logout from Bongo Basket Admin?")) {
+                localStorage.clear();
+                window.location.href = "login.html";
+            }
+        }
 
-async function loadYearlyBusiness(){
-const y=document.getElementById("yearlyYear").value;
-if(!y)return alert("Enter year");
-const res=await fetch(API+"/admin/business/yearly?year="+y);
-showCards(await res.json(),'yearlyResult');
-}
+        // --- VALIDATION HELPER ---
+        function showError(boxId, msg = "Wrong input or missing data") {
+            const box = document.getElementById(boxId);
+            box.style.display = "block";
+            box.className = "result-box error";
+            box.innerText = `❌ Error: ${msg}`;
+            return false;
+        }
 
-/* Product */
-async function addProduct(){
-const body={
-name:pname.value,
-description:pdesc.value,
-price:pprice.value,
-stock:pstock.value,
-categoryId:pcategory.value,
-imageUrl:pimage.value
-};
-const res=await fetch(API+"/admin/products/add",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
-addProductMsg.innerText=await res.text();
-}
+        async function handleResponse(response, boxId, labelText) {
+            const box = document.getElementById(boxId);
+            box.style.display = "block";
+            if (!response.ok) {
+                const text = await response.text();
+                box.className = "result-box error";
+                box.innerText = `❌ Error: ${text || "Failed"}`;
+                return;
+            }
+            const data = await response.json().catch(() => null);
+            box.className = "result-box success";
+            box.innerText = `✅ ${labelText} Successful`;
+            if (data && (data.totalBusiness !== undefined || typeof data === 'number')) {
+                const val = data.totalBusiness !== undefined ? data.totalBusiness : data;
+                document.getElementById("lifetime-val").innerText = "₹" + Number(val).toLocaleString();
+            }
+        }
 
-/* ✅ FIXED DELETE PRODUCT */
-async function deleteProduct(){
-const id = deleteProductId.value;
+        async function fetchOrders() {
+            try {
+                const res = await fetch(`${BASE_URL}/admin/orders/all`);
+                const orders = await res.json();
+                document.getElementById("orderTableBody").innerHTML = orders.map(o => `
+                    <tr>
+                        <td style="font-weight:bold; color:var(--brand-purple)">#${o.orderId || o.order_id}</td>
+                        <td>UID: ${o.userId || o.user_id}</td>
+                        <td style="color:var(--brand-pink); font-weight:700">₹${o.totalAmount || o.total_amount}</td>
+                        <td><span style="background:#fef9c3; padding:4px 8px; border-radius:4px; font-size:11px;">${o.status}</span></td>
+                        <td><button class="btn-danger" style="padding:4px 8px; border-radius:4px; border:none;" onclick="deleteOrder('${o.orderId || o.order_id}')">Del</button></td>
+                    </tr>
+                `).join('');
+            } catch (e) { console.error(e); }
+        }
 
-if(!id){
-alert("Enter Product ID");
-return;
-}
+        async function deleteOrder(id) {
+            if (!confirm(`Delete order #${id}?`)) return;
+            const res = await fetch(`${BASE_URL}/admin/orders/delete/${id}`, { method: "DELETE" });
+            if (res.ok) fetchOrders();
+            handleResponse(res, "orderResult", "Deletion");
+        }
 
-try{
-await fetch(API+"/admin/products/delete",{
-method:"DELETE",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({productId:id})
-});
+        async function addProduct() {
+            const name = document.getElementById('pname').value;
+            const desc = document.getElementById('pdesc').value;
+            const price = document.getElementById('pprice').value;
+            const stock = document.getElementById('pstock').value;
+            const catId = document.getElementById('pcategory').value;
+            const img = document.getElementById('pimage').value;
 
-alert("Deleted Successfully");
+            if (!name || !desc || !price || !stock || !catId || !img) return showError("addResult");
 
-deleteProductId.value="";
+            const res = await fetch(`${BASE_URL}/admin/products/add`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name: name, description: desc, price: Number(price),
+                    stock: Number(stock), categoryId: Number(catId), imageUrl: img
+                })
+            });
+            handleResponse(res, "addResult", "Addition");
+        }
 
-}catch{
-alert("Deleted Successfully");
-}
-}
+        async function deleteProduct() {
+            const id = document.getElementById('deleteId').value;
+            if (!id || id <= 0) return showError("deleteResult");
 
-/* Load User */
-async function loadUser(){
-const id=userId.value;
-if(!id)return alert("Enter User ID");
+            const res = await fetch(`${BASE_URL}/admin/products/delete`, {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ productId: Number(id) })
+            });
+            handleResponse(res, "deleteResult", "Deletion");
+        }
 
-try{
-const res=await fetch(API+"/admin/users/"+id);
-if(!res.ok){ userMsg.innerText="User not found ❌"; return; }
+        async function fetchUserDetails() {
+            const id = document.getElementById('uid').value;
+            if (!id) return alert("Enter a User ID");
+            try {
+                const res = await fetch(`${BASE_URL}/admin/users/${id}`);
+                if (!res.ok) throw new Error();
+                const user = await res.json();
+                document.getElementById('uname').value = user.username;
+                document.getElementById('uemail').value = user.email;
+                document.getElementById('urole').value = user.role;
+            } catch (e) { alert("User not found or wrong input"); }
+        }
 
-const user=await res.json();
-username.value=user.username || "";
-email.value=user.email || "";
-role.value=user.role || "";
+        async function modifyUser() {
+            const id = document.getElementById('uid').value;
+            const role = document.getElementById('urole').value;
+            if (!id) return showError("userResult");
 
-userMsg.innerText="User Loaded ✅";
+            const res = await fetch(`${BASE_URL}/admin/users/modify`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ userId: Number(id), role: role })
+            });
+            handleResponse(res, "userResult", "Update");
+        }
 
-}catch{
-userMsg.innerText="Error loading user ❌";
-}
-}
+        async function deleteUserAccount() {
+            const id = document.getElementById('delUserId').value;
+            if (!id) return showError("delUserResult");
+            if (!confirm(`Delete User ID: ${id}?`)) return;
 
-/* Update User */
-async function modifyUser(){
-const body={
-userId:userId.value,
-username:username.value,
-email:email.value,
-role:role.value
-};
+            const res = await fetch(`${BASE_URL}/admin/users/${id}`, { method: "DELETE" });
+            handleResponse(res, "delUserResult", "Deletion");
+        }
 
-await fetch(API+"/admin/users/modify",{
-method:"PUT",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify(body)
-});
+        async function overallBusiness() {
+            const res = await fetch(`${BASE_URL}/admin/business/overall`);
+            handleResponse(res, "businessResult", "Overall Revenue");
+        }
 
-userMsg.innerText="Updated ✅";
-}
+        async function dailyBusiness() {
+            const date = document.getElementById('date').value;
+            if (!date) return showError("businessResult", "Please select a date");
+            const res = await fetch(`${BASE_URL}/admin/business/daily?date=${date}`);
+            handleResponse(res, "businessResult", "Daily Revenue");
+        }
 
-/* Orders */
-async function loadOrders(){
-const res=await fetch(API+"/admin/orders/all");
-const data=await res.json();
+        async function monthlyBusiness() {
+            const m = document.getElementById('month').value;
+            const y = document.getElementById('yearMonth').value;
+            if (!m || !y || m < 1 || m > 12) return showError("businessResult");
+            const res = await fetch(`${BASE_URL}/admin/business/monthly?month=${m}&year=${y}`);
+            handleResponse(res, "businessResult", "Monthly Revenue");
+        }
 
-const rows = await Promise.all(data.map(async (o) => {
-
-let username="Unknown";
-
-try{
-const userRes=await fetch(API+"/admin/users/"+o.user_id);
-if(userRes.ok){
-const user=await userRes.json();
-username=user.username;
-}
-}catch{}
-
-return `
-<tr>
-<td>${o.order_id}</td>
-<td>${o.user_id}</td>
-<td>${username}</td>
-<td>₹${o.total_amount}</td>
-<td>${o.status}</td>
-<td><button class="deleteBtn" onclick="deleteOrder('${o.order_id}')">X</button></td>
-</tr>`;
-}));
-
-ordersTable.innerHTML=rows.join('');
-}
-
-async function deleteOrder(id){
-await fetch(API+"/admin/orders/delete/"+id,{method:"DELETE"});
-loadOrders();
-}
-
-/* Logout */
-function logout(){
-localStorage.clear();
-window.location.href="login.html";
-}
-</script>
-
+        async function yearlyBusiness() {
+            const year = document.getElementById('yearOnly').value;
+            if (!year || year.length < 4) return showError("businessResult");
+            const res = await fetch(`${BASE_URL}/admin/business/yearly?year=${year}`);
+            handleResponse(res, "businessResult", "Yearly Revenue");
+        }
+    </script>
 </body>
 </html>
