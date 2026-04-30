@@ -13,6 +13,7 @@
   --dark:#0f172a;
   --sidebar:#020617;
   --bg:#eef2f7;
+  --card:#ffffff;
 }
 
 *{box-sizing:border-box;margin:0;font-family:'Poppins',sans-serif;}
@@ -20,60 +21,6 @@
 body{
   display:flex;
   background:var(--bg);
-  flex-direction:column;
-}
-
-/* 🔥 OFFER BAR */
-.offer-bar{
-  width:100%;
-  background:#ef4444;
-  color:white;
-  overflow:hidden;
-  white-space:nowrap;
-  position:fixed;
-  top:0;
-  z-index:999;
-}
-.offer-text{
-  display:inline-block;
-  padding:10px 0;
-  font-weight:600;
-  animation:moveOffer 10s linear infinite;
-}
-@keyframes moveOffer{
-  0%{transform:translateX(-100%);}
-  100%{transform:translateX(100%);}
-}
-
-/* 💥 FALLING SHOP CARD */
-.shop-banner{
-  position:fixed;
-  top:-200px;
-  left:50%;
-  transform:translateX(-50%);
-  background:linear-gradient(135deg,#6366f1,#22c55e);
-  color:white;
-  padding:25px 40px;
-  border-radius:15px;
-  text-align:center;
-  box-shadow:0 15px 30px rgba(0,0,0,0.2);
-  z-index:998;
-  animation:dropDown 1.2s ease forwards;
-}
-.shop-banner button{
-  background:white;
-  color:#6366f1;
-  border:none;
-  padding:10px 20px;
-  border-radius:8px;
-  cursor:pointer;
-  font-weight:600;
-}
-@keyframes dropDown{
-  0%{top:-200px;}
-  70%{top:80px;}
-  85%{top:60px;}
-  100%{top:70px;}
 }
 
 /* SIDEBAR */
@@ -87,14 +34,28 @@ body{
   display:flex;
   flex-direction:column;
   gap:20px;
-  top:40px;
+}
+
+.sidebar h2{
+  color:var(--primary);
+}
+
+.sidebar a{
+  color:white;
+  text-decoration:none;
+  padding:10px;
+  border-radius:8px;
+  transition:0.3s;
+}
+
+.sidebar a:hover{
+  background:var(--primary);
 }
 
 /* MAIN */
 .main{
   margin-left:240px;
   width:100%;
-  margin-top:120px;
 }
 
 /* NAV */
@@ -133,6 +94,7 @@ nav{
 .username-display{
   margin-left:20px;
   font-weight:600;
+  color:var(--dark);
 }
 
 /* CONTENT */
@@ -156,6 +118,10 @@ nav{
   cursor:pointer;
 }
 
+.category-btn:hover{
+  background:var(--primary);
+}
+
 .product-grid{
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
@@ -167,22 +133,27 @@ nav{
   border-radius:15px;
   padding:15px;
   box-shadow:0 6px 15px rgba(0,0,0,0.08);
+  transition:0.3s;
+}
+
+.card:hover{
+  transform:translateY(-5px);
+}
+
+.img-box{
+  height:150px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.img-box img{
+  max-width:100%;
+  max-height:100%;
 }
 
 .price{
   margin:10px 0;
-}
-
-.old-price{
-  text-decoration:line-through;
-  color:#999;
-  font-size:14px;
-}
-
-.new-price{
-  color:#22c55e;
-  font-size:18px;
-  font-weight:700;
 }
 
 .add-btn{
@@ -195,6 +166,10 @@ nav{
   cursor:pointer;
 }
 
+.add-btn:hover{
+  background:#4f46e5;
+}
+
 @media(max-width:800px){
   .sidebar{display:none;}
   .main{margin-left:0;}
@@ -203,20 +178,6 @@ nav{
 </head>
 
 <body>
-
-<!-- 🔥 MOVING OFFER -->
-<div class="offer-bar">
-  <div class="offer-text">
-    🔥 FLAT 50% OFF 🔥 FLAT 50% OFF 🔥 FLAT 50% OFF 🔥
-  </div>
-</div>
-
-<!-- 💥 FALLING SHOP -->
-<div class="shop-banner">
-  <h2>🔥 Big Sale is Live!</h2>
-  <p>Flat 50% OFF on all items</p>
-  <button onclick="scrollToProducts()">Shop Now</button>
-</div>
 
 <div class="sidebar">
   <h2>BONGO</h2>
@@ -229,21 +190,23 @@ nav{
 
 <div class="main">
 
-<nav>
-  <div>
-    <input type="text" class="search-box" placeholder="Search..." onkeyup="searchProducts(this.value)">
-    <span class="username-display" id="username-display"></span>
-  </div>
-  <div class="cart-icon" onclick="window.location.href='cart.html'">
-    🛒 <span class="badge" id="cart-count">0</span>
-  </div>
-</nav>
+  <nav>
+    <div>
+      <input type="text" class="search-box" placeholder="Search..." onkeyup="searchProducts(this.value)">
+      <span class="username-display" id="username-display"></span>
+    </div>
+    <div class="cart-icon" onclick="window.location.href='cart.html'">
+      🛒 <span class="badge" id="cart-count">0</span>
+    </div>
+  </nav>
 
-<div class="container" id="products-section">
-  <div class="category-bar" id="category-bar"></div>
-  <div class="product-grid" id="grid"></div>
-</div>
+  <div class="container">
 
+    <div class="category-bar" id="category-bar"></div>
+
+    <div class="product-grid" id="grid"></div>
+
+  </div>
 </div>
 
 <script>
@@ -261,10 +224,6 @@ window.onload=function(){
   loadCategories();
   fetchCartCount();
 };
-
-function scrollToProducts(){
-  document.getElementById("products-section").scrollIntoView({behavior:"smooth"});
-}
 
 async function loadProducts(){
   const res=await fetch(API_BASE+"/products");
@@ -297,7 +256,6 @@ function renderProducts(products){
   if(!products.length){grid.innerHTML="No products";return;}
 
   grid.innerHTML=products.map(p=>{
-    const original = p.price;
     const discounted = (p.price * 0.5).toFixed(0);
 
     return `
@@ -309,8 +267,13 @@ function renderProducts(products){
       <h4>${p.name}</h4>
 
       <div class="price">
-        <div class="old-price">₹${original}</div>
-        <div class="new-price">₹${discounted} (50% OFF)</div>
+        <span style="text-decoration:line-through;color:#999;">
+          ₹${p.price}
+        </span>
+        <br>
+        <span style="color:#22c55e;font-weight:600;">
+          ₹${discounted} (50% OFF)
+        </span>
       </div>
 
       <button class="add-btn" onclick="addToCart(${p.product_id})">
