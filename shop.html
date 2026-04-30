@@ -47,7 +47,6 @@ body{
   font-size:18px;
 }
 
-/* continuous left → right */
 @keyframes moveText{
   0%{transform:translateX(-100%);}
   100%{transform:translateX(100%);}
@@ -64,30 +63,25 @@ body{
   display:flex;
   flex-direction:column;
   gap:20px;
-  top:40px; /* adjust for bar */
+  top:40px;
 }
 
-.sidebar h2{
-  color:var(--primary);
-}
+.sidebar h2{color:var(--primary);}
 
 .sidebar a{
   color:white;
   text-decoration:none;
   padding:10px;
   border-radius:8px;
-  transition:0.3s;
 }
 
-.sidebar a:hover{
-  background:var(--primary);
-}
+.sidebar a:hover{background:var(--primary);}
 
 /* MAIN */
 .main{
   margin-left:240px;
   width:100%;
-  margin-top:40px; /* adjust for bar */
+  margin-top:40px;
 }
 
 /* NAV */
@@ -107,11 +101,7 @@ nav{
   width:250px;
 }
 
-.cart-icon{
-  position:relative;
-  cursor:pointer;
-  font-size:20px;
-}
+.cart-icon{position:relative;cursor:pointer;font-size:20px;}
 
 .badge{
   position:absolute;
@@ -123,16 +113,10 @@ nav{
   font-size:11px;
 }
 
-.username-display{
-  margin-left:20px;
-  font-weight:600;
-  color:var(--dark);
-}
+.username-display{margin-left:20px;font-weight:600;color:var(--dark);}
 
 /* CONTENT */
-.container{
-  padding:30px 5%;
-}
+.container{padding:30px 5%;}
 
 .category-bar{
   display:flex;
@@ -150,9 +134,7 @@ nav{
   cursor:pointer;
 }
 
-.category-btn:hover{
-  background:var(--primary);
-}
+.category-btn:hover{background:var(--primary);}
 
 .product-grid{
   display:grid;
@@ -165,11 +147,6 @@ nav{
   border-radius:15px;
   padding:15px;
   box-shadow:0 6px 15px rgba(0,0,0,0.08);
-  transition:0.3s;
-}
-
-.card:hover{
-  transform:translateY(-5px);
 }
 
 .img-box{
@@ -184,9 +161,7 @@ nav{
   max-height:100%;
 }
 
-.price{
-  margin:10px 0;
-}
+.price{margin:10px 0;}
 
 .add-btn{
   background:var(--primary);
@@ -196,10 +171,6 @@ nav{
   border-radius:8px;
   width:100%;
   cursor:pointer;
-}
-
-.add-btn:hover{
-  background:#4f46e5;
 }
 
 @media(max-width:800px){
@@ -232,23 +203,21 @@ nav{
 
 <div class="main">
 
-  <nav>
-    <div>
-      <input type="text" class="search-box" placeholder="Search..." onkeyup="searchProducts(this.value)">
-      <span class="username-display" id="username-display"></span>
-    </div>
-    <div class="cart-icon" onclick="window.location.href='cart.html'">
-      🛒 <span class="badge" id="cart-count">0</span>
-    </div>
-  </nav>
-
-  <div class="container">
-
-    <div class="category-bar" id="category-bar"></div>
-
-    <div class="product-grid" id="grid"></div>
-
+<nav>
+  <div>
+    <input type="text" class="search-box" placeholder="Search..." onkeyup="searchProducts(this.value)">
+    <span class="username-display" id="username-display"></span>
   </div>
+  <div class="cart-icon" onclick="window.location.href='cart.html'">
+    🛒 <span class="badge" id="cart-count">0</span>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="category-bar" id="category-bar"></div>
+  <div class="product-grid" id="grid"></div>
+</div>
+
 </div>
 
 <script>
@@ -261,7 +230,7 @@ window.onload=function(){
     window.location.href="login.html";
     return;
   }
-  document.getElementById("username-display").innerText = "Hello, " + currentUsername;
+  document.getElementById("username-display").innerText="Hello, "+currentUsername;
   loadProducts();
   loadCategories();
   fetchCartCount();
@@ -298,7 +267,7 @@ function renderProducts(products){
   if(!products.length){grid.innerHTML="No products";return;}
 
   grid.innerHTML=products.map(p=>{
-    const discounted = (p.price * 0.5).toFixed(0);
+    const discounted=(p.price*0.5).toFixed(0);
 
     return `
     <div class="card">
@@ -319,12 +288,22 @@ function renderProducts(products){
   }).join("");
 }
 
+/* ✅ UPDATED (IMPORTANT) */
 async function addToCart(productId){
+  const product=allProducts.find(p=>p.product_id===productId);
+  const discounted=(product.price*0.5).toFixed(0);
+
   await fetch(API_BASE+"/cart/add",{
     method:"POST",
     headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({username:currentUsername,productId,quantity:1})
+    body:JSON.stringify({
+      username:currentUsername,
+      productId,
+      quantity:1,
+      price:discounted   // 🔥 send discounted price
+    })
   });
+
   fetchCartCount();
 }
 
