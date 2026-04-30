@@ -1,77 +1,302 @@
-<!-- ONLY CHANGE IS INSIDE downloadBill() FUNCTION -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Bongo Basket | Order History</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+:root{
+  --primary:#6366f1;
+  --accent:#22c55e;
+  --success:#22c55e;
+  --warning:#f59e0b;
+  --danger:#ef4444;
+  --bg:#f1f5f9;
+  --card-bg:#ffffff;
+  --sidebar-bg:linear-gradient(to bottom,#6366f1,#22c55e);
+}
+
+/* SAME UI (UNCHANGED) */
+*{ margin:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
+
+body{
+  display:flex;
+  background:var(--bg);
+  min-height:100vh;
+}
+
+.sidebar{
+  width:250px;
+  background:var(--sidebar-bg);
+  color:white;
+  display:flex;
+  flex-direction:column;
+  padding:30px 20px;
+  border-radius:0 15px 15px 0;
+  box-shadow:0 0 20px rgba(0,0,0,0.2);
+}
+
+.sidebar h2{
+  margin-bottom:30px;
+  font-size:24px;
+  text-align:center;
+}
+
+.sidebar .nav-btn{
+  background:rgba(255,255,255,0.2);
+  border:none;
+  padding:12px;
+  border-radius:10px;
+  width:100%;
+  color:white;
+  font-weight:600;
+  margin-bottom:12px;
+  cursor:pointer;
+}
+
+.main-content{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+}
+
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:20px 30px;
+  background:linear-gradient(to right,#6366f1,#22c55e);
+  color:white;
+  border-radius:0 0 15px 15px;
+}
+
+.container{ padding:30px; }
+
+/* 🔥 ONLY ADDED FEATURE (MOVING TEXT) */
+.moving-bar{
+  width:100%;
+  overflow:hidden;
+  margin-bottom:15px;
+}
+.moving-track{
+  display:flex;
+  width:max-content;
+  animation:moveLR 12s linear infinite;
+}
+.moving-text{
+  font-size:18px;
+  font-weight:600;
+  color:#16a34a;
+  padding-right:60px;
+  white-space:nowrap;
+}
+@keyframes moveLR{
+  0%{transform:translateX(-100%);}
+  100%{transform:translateX(100%);}
+}
+
+/* REST SAME */
+.card{
+  display:flex;
+  gap:20px;
+  background:var(--card-bg);
+  margin-bottom:20px;
+  padding:20px;
+  border-radius:15px;
+  box-shadow:0 6px 15px rgba(0,0,0,0.08);
+  flex-wrap:wrap;
+}
+
+.card img{
+  width:120px;
+  height:120px;
+  object-fit:cover;
+  border-radius:10px;
+}
+
+.details{ flex:1; }
+
+.price{
+  font-weight:bold;
+  color:var(--primary);
+}
+
+.status{
+  display:inline-block;
+  padding:5px 10px;
+  border-radius:6px;
+  font-size:12px;
+}
+
+.delivered{background:var(--success);color:white;}
+
+.modal{
+  position:fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background:rgba(0,0,0,0.5);
+  display:none;
+  justify-content:center;
+  align-items:center;
+}
+
+.modal-content{
+  background:white;
+  color:#000;
+  padding:25px;
+  border-radius:15px;
+  width:400px;
+}
+
+.download-btn{
+  width:100%;
+  padding:10px;
+  margin-top:15px;
+  background:var(--primary);
+  color:white;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <h2>BONGO BASKET</h2>
+  <button class="nav-btn" onclick="window.location.href='shop.html'">🏠 Dashboard</button>
+  <button class="nav-btn" onclick="window.location.href='payment.html'">Go to Payment 💳</button>
+</div>
+
+<div class="main-content">
+
+  <div class="header">
+    Welcome, <b id="user"></b>
+    <button onclick="logout()">Logout</button>
+  </div>
+
+  <div class="container">
+
+    <!-- 🔥 MOVING TEXT -->
+    <div class="moving-bar">
+      <div class="moving-track">
+        <div class="moving-text">🙏 Thank you for using my product, please visit again 🙏</div>
+        <div class="moving-text">🙏 Thank you for using my product, please visit again 🙏</div>
+      </div>
+    </div>
+
+    <h2>Your Orders</h2>
+    <div id="orders"></div>
+  </div>
+</div>
+
+<!-- BILL MODAL (UNCHANGED) -->
+<div class="modal" id="billModal">
+  <div class="modal-content">
+    <h3>Order Bill</h3>
+    <div id="billDetails"></div>
+    <button class="download-btn" onclick="downloadBill()">Download PDF</button>
+  </div>
+</div>
 
 <script>
-function downloadBill(){
-  if(!currentBillData) return;
+const API = "https://my-full-stack-ae3l.onrender.com/api";
+const username = localStorage.getItem("username");
+let currentBillData = null;
 
+if(!username){ window.location="login.html"; }
+document.getElementById("user").innerText = username;
+
+async function loadOrders(){
+  const res = await fetch(API + "/orders?username=" + username);
+  const data = await res.json();
+  const products = data.products;
+
+  document.getElementById("orders").innerHTML = products.map(p => `
+    <div class="card">
+      <img src="${p.image_url}">
+      <div class="details">
+        <h3>${p.name}</h3>
+        <p>Quantity: ${p.quantity}</p>
+        <p class="price">₹${p.total_price}</p>
+        <span class="status delivered">Delivered</span>
+        <button class="nav-btn" onclick='showBill(${JSON.stringify(p)})'>Show Bill</button>
+      </div>
+    </div>
+  `).join("");
+}
+
+function showBill(order){
+  currentBillData = order;
+  document.getElementById("billDetails").innerHTML = `
+    <p>Order ID: ${order.order_id}</p>
+    <p>Product: ${order.name}</p>
+    <p>Qty: ${order.quantity}</p>
+    <p>Total: ₹${order.total_price}</p>
+  `;
+  document.getElementById("billModal").style.display="flex";
+}
+
+/* 🧾 PROFESSIONAL INVOICE (ONLY IMPROVED PART) */
+function downloadBill(){
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
 
-  // ===== HEADER =====
   doc.setFont("helvetica","bold");
-  doc.setFontSize(20);
+  doc.setFontSize(18);
   doc.text("BONGO BASKET", 20, 20);
 
   doc.setFontSize(12);
   doc.setFont("helvetica","normal");
-  doc.text("E-Commerce Invoice", 20, 28);
+  doc.text("Invoice", 20, 28);
 
-  // Line
   doc.line(20, 32, 190, 32);
 
-  // ===== ORDER INFO =====
-  doc.setFontSize(11);
-  doc.text(`Order ID: ${currentBillData.order_id}`, 20, 40);
-  doc.text(`Order Date: ${currentBillData.order_date}`, 20, 46);
+  doc.text(`Order ID: ${currentBillData.order_id}`, 20, 42);
+  doc.text(`Customer: ${username}`, 20, 50);
+  doc.text(`Date: ${currentBillData.order_date}`, 20, 58);
 
-  doc.text(`Customer: ${username}`, 140, 40);
-  doc.text(`Status: Delivered`, 140, 46);
-
-  // Divider
-  doc.line(20, 52, 190, 52);
-
-  // ===== PRODUCT TABLE HEADER =====
-  doc.setFont("helvetica","bold");
-  doc.text("Product", 20, 60);
-  doc.text("Qty", 110, 60);
-  doc.text("Price", 130, 60);
-  doc.text("Total", 160, 60);
-
-  doc.line(20, 63, 190, 63);
-
-  // ===== PRODUCT DATA =====
-  doc.setFont("helvetica","normal");
-  doc.text(currentBillData.name, 20, 70);
-  doc.text(String(currentBillData.quantity), 110, 70);
-  doc.text(`₹${currentBillData.price_per_unit}`, 130, 70);
-  doc.text(`₹${currentBillData.total_price}`, 160, 70);
-
-  // Divider
-  doc.line(20, 80, 190, 80);
-
-  // ===== TOTAL SECTION =====
-  doc.setFont("helvetica","bold");
-  doc.text("Subtotal:", 130, 90);
-  doc.text(`₹${currentBillData.total_price}`, 160, 90);
-
-  doc.setFont("helvetica","normal");
-  doc.text("Delivery:", 130, 97);
-  doc.text("₹0", 160, 97);
+  doc.line(20, 65, 190, 65);
 
   doc.setFont("helvetica","bold");
-  doc.text("Grand Total:", 130, 105);
-  doc.text(`₹${currentBillData.total_price}`, 160, 105);
+  doc.text("Product", 20, 75);
+  doc.text("Qty", 110, 75);
+  doc.text("Price", 140, 75);
+  doc.text("Total", 170, 75);
 
-  // Divider
-  doc.line(20, 115, 190, 115);
+  doc.line(20, 78, 190, 78);
 
-  // ===== FOOTER =====
-  doc.setFontSize(10);
   doc.setFont("helvetica","normal");
-  doc.text("Thank you for shopping with Bongo Basket!", 20, 125);
-  doc.text("For support: support@bongobasket.com", 20, 132);
+  doc.text(currentBillData.name, 20, 88);
+  doc.text(String(currentBillData.quantity), 110, 88);
+  doc.text(`₹${currentBillData.price_per_unit}`, 140, 88);
+  doc.text(`₹${currentBillData.total_price}`, 170, 88);
 
-  // Save
+  doc.line(20, 98, 190, 98);
+
+  doc.setFont("helvetica","bold");
+  doc.text("Grand Total:", 140, 110);
+  doc.text(`₹${currentBillData.total_price}`, 170, 110);
+
+  doc.text("Thank you for shopping with us!", 20, 130);
+
   doc.save(`Invoice_${currentBillData.order_id}.pdf`);
 }
+
+function closeModal(){
+  document.getElementById("billModal").style.display="none";
+}
+
+function logout(){
+  localStorage.clear();
+  window.location.href="login.html";
+}
+
+loadOrders();
 </script>
+
+</body>
+</html>
