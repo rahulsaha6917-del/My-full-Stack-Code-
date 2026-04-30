@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <title>Bongo Basket | Cart</title>
 
-<!-- Google Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
@@ -18,7 +17,7 @@
   --sidebar-bg:linear-gradient(to bottom,#6366f1,#22c55e);
 }
 
-/* Reset */
+/* RESET */
 *{margin:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
 body{background:var(--bg); display:flex; height:100vh; overflow:hidden;}
 
@@ -29,7 +28,6 @@ body{background:var(--bg); display:flex; height:100vh; overflow:hidden;}
   color:white;
   display:flex;
   flex-direction:column;
-  justify-content:flex-start;
   padding:30px 20px;
   border-radius:0 15px 15px 0;
   box-shadow:0 0 20px rgba(0,0,0,0.2);
@@ -49,6 +47,40 @@ body{background:var(--bg); display:flex; height:100vh; overflow:hidden;}
   transition:0.3s;
 }
 .sidebar .nav-btn:hover{background:rgba(255,255,255,0.4);}
+
+/* MAIN */
+.main-content{
+  flex:1;
+  padding:30px;
+  overflow-y:auto;
+}
+
+/* 🔥 MOVING OFFER BAR */
+.offer-bar{
+  width:100%;
+  overflow:hidden;
+  background:linear-gradient(to right,#ef4444,#f59e0b);
+  border-radius:10px;
+  margin-bottom:15px;
+}
+.offer-track{
+  display:flex;
+  width:max-content;
+  animation:scrollRight 12s linear infinite;
+}
+.offer-text{
+  color:white;
+  font-weight:700;
+  font-size:18px;
+  padding:10px 40px;
+  white-space:nowrap;
+}
+
+/* KEYFRAME: LEFT → RIGHT */
+@keyframes scrollRight{
+  0%{transform:translateX(-50%);}
+  100%{transform:translateX(100%);}
+}
 
 /* HEADER */
 .header{
@@ -70,18 +102,10 @@ body{background:var(--bg); display:flex; height:100vh; overflow:hidden;}
   color:white;
   font-weight:600;
   cursor:pointer;
-  transition:0.3s;
 }
 .logout-btn:hover{background:#dc2626;}
 
-/* MAIN CONTENT */
-.main-content{
-  flex:1;
-  padding:30px;
-  overflow-y:auto;
-}
-
-/* CART CARDS */
+/* CART */
 .cart-card{
   display:flex;
   justify-content:space-between;
@@ -91,37 +115,32 @@ body{background:var(--bg); display:flex; height:100vh; overflow:hidden;}
   margin-bottom:20px;
   border-radius:15px;
   box-shadow:0 8px 20px rgba(0,0,0,0.08);
-  transition:0.3s;
 }
-.cart-card:hover{transform:translateY(-3px);}
 .product-img{
   width:80px; height:80px; object-fit:cover; border-radius:10px;
 }
-
-/* DETAILS */
-.details{
-  flex:2;
-  padding:0 15px;
-}
-.details h3{margin-bottom:5px; color:var(--secondary);}
-.details p{margin-bottom:5px; font-size:14px; color:#555;}
-.qty-controls{
-  display:flex; align-items:center; gap:5px;
-}
+.details{flex:2; padding:0 15px;}
+.details h3{color:var(--secondary);}
+.details p{color:#555; font-size:14px;}
+.qty-controls{display:flex; gap:5px; align-items:center;}
 .qty-btn{
-  width:28px; height:28px; border:none; border-radius:5px;
-  background:var(--primary); color:white; cursor:pointer; font-weight:bold;
-  transition:0.3s;
+  width:28px; height:28px;
+  border:none;
+  background:var(--primary);
+  color:white;
+  border-radius:5px;
+  cursor:pointer;
 }
-.qty-btn:hover{background:#0f766e;}
 .remove-btn{
   background:var(--danger);
-  color:white; border:none; padding:6px 12px; border-radius:6px;
-  cursor:pointer; transition:0.3s;
+  color:white;
+  border:none;
+  padding:6px 12px;
+  border-radius:6px;
+  cursor:pointer;
 }
-.remove-btn:hover{background:#dc2626;}
 
-/* TOTAL BOX */
+/* TOTAL */
 .total-box{
   background:white;
   padding:20px;
@@ -129,32 +148,27 @@ body{background:var(--bg); display:flex; height:100vh; overflow:hidden;}
   box-shadow:0 8px 20px rgba(0,0,0,0.08);
   max-width:400px;
   margin-left:auto;
-  font-size:18px;
-  font-weight:600;
   text-align:right;
   position:sticky;
   top:20px;
 }
-
-/* CHECKOUT */
 .checkout-btn{
   margin-top:15px;
-  background:linear-gradient(to right, var(--primary), var(--accent));
-  color:white; border:none; padding:14px 20px; border-radius:12px;
-  font-weight:600; font-size:16px; cursor:pointer; transition:0.3s;
+  background:linear-gradient(to right,var(--primary),var(--accent));
+  color:white;
+  border:none;
+  padding:14px 20px;
+  border-radius:12px;
+  cursor:pointer;
 }
-.checkout-btn:hover{transform:scale(1.05);}
 
-/* EMPTY MESSAGE */
-.empty{
-  text-align:center; color:#555; font-size:18px; padding:50px;
-}
+/* EMPTY */
+.empty{text-align:center; padding:50px;}
 
 /* RESPONSIVE */
 @media(max-width:900px){
   body{flex-direction:column;}
-  .sidebar{width:100%; border-radius:0 0 15px 15px;}
-  .total-box{position:static; margin:20px 0;}
+  .sidebar{width:100%;}
 }
 </style>
 </head>
@@ -170,8 +184,19 @@ body{background:var(--bg); display:flex; height:100vh; overflow:hidden;}
   <button class="nav-btn" onclick="window.location.href='payment.html'">💳 Payment</button>
 </div>
 
-<!-- MAIN CONTENT -->
+<!-- MAIN -->
 <div class="main-content">
+
+  <!-- 🔥 OFFER -->
+  <div class="offer-bar">
+    <div class="offer-track">
+      <div class="offer-text">🎉 FLAT 50% OFF ON ALL PRODUCTS 🎉</div>
+      <div class="offer-text">🎉 FLAT 50% OFF ON ALL PRODUCTS 🎉</div>
+      <div class="offer-text">🎉 FLAT 50% OFF ON ALL PRODUCTS 🎉</div>
+    </div>
+  </div>
+
+  <!-- HEADER -->
   <div class="header">
     <h2>Your Cart</h2>
     <button class="logout-btn" onclick="logout()">Logout</button>
@@ -187,36 +212,35 @@ body{background:var(--bg); display:flex; height:100vh; overflow:hidden;}
 </div>
 
 <script>
-const API_BASE=" https://my-full-stack-ae3l.onrender.com/api";
+const API_BASE="https://my-full-stack-ae3l.onrender.com/api";
 const username=localStorage.getItem("username");
-let cartProducts = [];
-let deliveryCharge = 0;
+let cartProducts=[];
+let deliveryCharge=0;
 
-if(!username){ window.location.href="login.html"; }
+if(!username){window.location.href="login.html";}
 document.getElementById("userDisp").innerText=username;
 
-// ---------------- LOAD CART ----------------
+/* LOAD CART */
 async function loadCart(){
   try{
     const res=await fetch(API_BASE+"/cart/items?username="+username);
     const data=await res.json();
-    cartProducts = data.cart.products;
+    cartProducts=data.cart.products;
     renderCart(cartProducts);
     calculateTotal(data.cart.overall_total_price);
-  }catch(err){
-    console.error(err);
-    document.getElementById("cart-container").innerHTML = "<p class='empty'>Failed to load cart</p>";
+  }catch{
+    document.getElementById("cart-container").innerHTML="<p class='empty'>Failed to load cart</p>";
   }
 }
 
-// ---------------- RENDER CART ----------------
+/* RENDER */
 function renderCart(products){
   const container=document.getElementById("cart-container");
   if(!products || products.length===0){
     container.innerHTML="<p class='empty'>Your cart is empty 😔</p>";
     return;
   }
-  container.innerHTML = products.map(item => `
+  container.innerHTML=products.map(item=>`
     <div class="cart-card">
       <img class="product-img" src="${item.image_url}">
       <div class="details">
@@ -228,21 +252,22 @@ function renderCart(products){
           <button class="qty-btn" onclick="updateQty(${item.product_id},${item.quantity+1})">+</button>
         </div>
       </div>
-      <div class="total">₹${item.total_price}</div>
+      <div>₹${item.total_price}</div>
       <button class="remove-btn" onclick="removeItem(${item.product_id})">Remove</button>
     </div>
   `).join('');
 }
 
-// ---------------- TOTAL & DELIVERY ----------------
+/* TOTAL */
 function calculateTotal(overallTotal){
   deliveryCharge = overallTotal>0 && overallTotal<10000 ? 200 : 0;
   const finalTotal = overallTotal + deliveryCharge;
-  document.getElementById("deliveryCharge").innerText = deliveryCharge>0 ? "Delivery Charge: ₹"+deliveryCharge : "Delivery Free";
+  document.getElementById("deliveryCharge").innerText =
+    deliveryCharge>0 ? "Delivery Charge: ₹"+deliveryCharge : "Delivery Free";
   document.getElementById("grandTotal").innerText = finalTotal;
 }
 
-// ---------------- UPDATE QUANTITY ----------------
+/* UPDATE */
 async function updateQty(productId,qty){
   if(qty<=0){ removeItem(productId); return; }
   await fetch(API_BASE+"/cart/update",{
@@ -253,7 +278,7 @@ async function updateQty(productId,qty){
   loadCart();
 }
 
-// ---------------- REMOVE ITEM ----------------
+/* REMOVE */
 async function removeItem(productId){
   await fetch(API_BASE+"/cart/delete",{
     method:"DELETE",
@@ -263,20 +288,19 @@ async function removeItem(productId){
   loadCart();
 }
 
-// ---------------- CHECKOUT ----------------
+/* CHECKOUT */
 function goPayment(){
   if(cartProducts.length===0){ alert("Cart is empty!"); return; }
   localStorage.setItem("deliveryCharge",deliveryCharge);
   window.location.href="payment.html";
 }
 
-// ---------------- LOGOUT ----------------
+/* LOGOUT */
 function logout(){
   localStorage.clear();
   window.location.href="login.html";
 }
 
-// ---------------- INIT ----------------
 loadCart();
 </script>
 
