@@ -376,7 +376,7 @@ function downloadBill(){
   let y = 20;
 
   // ===== HEADER =====
-  doc.setFillColor(79,70,229); // modern purple
+  doc.setFillColor(79,70,229);
   doc.rect(0,0,210,40,"F");
 
   doc.setTextColor(255,255,255);
@@ -389,7 +389,7 @@ function downloadBill(){
 
   doc.setTextColor(0,0,0);
 
-  // ===== BILL INFO =====
+  // ===== BILLING DETAILS =====
   y = 55;
 
   doc.setFont("helvetica","bold");
@@ -416,7 +416,7 @@ function downloadBill(){
   doc.text("Price", 140, y+8);
   doc.text("Total", 165, y+8);
 
-  // ===== PRODUCT =====
+  // ===== PRODUCT ROW =====
   y += 18;
 
   doc.setFont("helvetica","normal");
@@ -425,31 +425,40 @@ function downloadBill(){
 
   doc.text(lines, 22, y);
   doc.text(String(qty), 115, y);
-
-  // ✅ FIXED CURRENCY
   doc.text(`INR ${price}`, 140, y);
   doc.text(`INR ${total}`, 165, y);
 
   y += lines.length * 6;
 
+  // Line after product
+  doc.setLineWidth(0.3);
   doc.line(20, y, 190, y);
 
-  // ===== TOTAL =====
+  // ===== TOTAL SECTION (FINAL FIXED) =====
   y += 12;
 
   doc.setFont("helvetica","bold");
+  doc.setFontSize(11);
 
-  doc.text("Subtotal:", 140, y);
-  doc.text(`INR ${total}`, 165, y);
-
-  y += 8;
-  doc.text("Shipping:", 140, y);
-  doc.text("INR 0", 165, y);
+  doc.text("Subtotal:", 130, y);
+  doc.text(`INR ${total}`, 190, y, { align: "right" });
 
   y += 8;
+  doc.text("Shipping:", 130, y);
+  doc.text("INR 0", 190, y, { align: "right" });
+
+  y += 10;
+
+  // Divider
+  doc.setLineWidth(0.5);
+  doc.line(130, y-4, 190, y-4);
+
+  // Grand Total
   doc.setFontSize(13);
-  doc.text("Grand Total: ", 140, y);
-  doc.text(`INR ${total}`, 165, y);
+  doc.setFont("helvetica","bold");
+
+  doc.text("Grand Total:", 130, y);
+  doc.text(`INR ${total}`, 190, y, { align: "right" });
 
   // ===== FOOTER =====
   y += 25;
