@@ -23,6 +23,36 @@ body{
   background:var(--bg);
 }
 
+/* 🔥 MOVING 50% OFF BAR */
+.offer-bar{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  overflow:hidden;
+  background:#ef4444;
+  color:white;
+  z-index:1000;
+}
+
+.offer-track{
+  display:flex;
+  white-space:nowrap;
+  animation:moveText 12s linear infinite;
+}
+
+.offer-text{
+  padding:10px 40px;
+  font-weight:700;
+  font-size:18px;
+}
+
+/* continuous left → right */
+@keyframes moveText{
+  0%{transform:translateX(-100%);}
+  100%{transform:translateX(100%);}
+}
+
 /* SIDEBAR */
 .sidebar{
   width:240px;
@@ -34,6 +64,7 @@ body{
   display:flex;
   flex-direction:column;
   gap:20px;
+  top:40px; /* adjust for bar */
 }
 
 .sidebar h2{
@@ -56,6 +87,7 @@ body{
 .main{
   margin-left:240px;
   width:100%;
+  margin-top:40px; /* adjust for bar */
 }
 
 /* NAV */
@@ -179,6 +211,16 @@ nav{
 
 <body>
 
+<!-- 🔥 MOVING TEXT -->
+<div class="offer-bar">
+  <div class="offer-track">
+    <div class="offer-text">🔥 FLAT 50% OFF 🔥</div>
+    <div class="offer-text">🔥 FLAT 50% OFF 🔥</div>
+    <div class="offer-text">🔥 FLAT 50% OFF 🔥</div>
+    <div class="offer-text">🔥 FLAT 50% OFF 🔥</div>
+  </div>
+</div>
+
 <div class="sidebar">
   <h2>BONGO</h2>
   <a href="shop.html">🏠 Dashboard</a>
@@ -267,18 +309,11 @@ function renderProducts(products){
       <h4>${p.name}</h4>
 
       <div class="price">
-        <span style="text-decoration:line-through;color:#999;">
-          ₹${p.price}
-        </span>
-        <br>
-        <span style="color:#22c55e;font-weight:600;">
-          ₹${discounted} (50% OFF)
-        </span>
+        <span style="text-decoration:line-through;color:#999;">₹${p.price}</span><br>
+        <span style="color:#22c55e;">₹${discounted} (50% OFF)</span>
       </div>
 
-      <button class="add-btn" onclick="addToCart(${p.product_id})">
-        Add
-      </button>
+      <button class="add-btn" onclick="addToCart(${p.product_id})">Add</button>
     </div>
     `;
   }).join("");
