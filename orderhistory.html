@@ -365,19 +365,97 @@ function closeModal(){ document.getElementById("billModal").style.display = "non
 
 function downloadBill(){
   if(!currentBillData) return;
+
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
-  doc.setFontSize(16);
-  doc.text("BONGO BASKET - Order Bill", 20, 20);
+
+  const price = Number(currentBillData.price_per_unit || 0);
+  const total = Number(currentBillData.total_price || 0);
+  const qty = Number(currentBillData.quantity || 0);
+
+  let y = 20;
+
+  // ===== HEADER BOX =====
+  doc.setFillColor(99,102,241);
+  doc.rect(0,0,210,35,"F");
+
+  doc.setTextColor(255,255,255);
+  doc.setFont("helvetica","bold");
+  doc.setFontSize(18);
+  doc.text("BONGO BASKET", 20, 20);
+
+  doc.setFontSize(10);
+  doc.text("Tax Invoice", 20, 28);
+
+  doc.setTextColor(0,0,0);
+
+  // ===== BILLING SECTION =====
+  y = 50;
+
+  doc.setFont("helvetica","bold");
+  doc.text("Billing Details", 20, y);
+
+  doc.setFont("helvetica","normal");
+  doc.text(`Customer: ${username}`, 20, y+6);
+  doc.text(`Order ID: ${currentBillData.order_id}`, 20, y+12);
+  doc.text(`Date: ${currentBillData.order_date}`, 20, y+18);
+  doc.text(`Payment: Prepaid`, 20, y+24);
+
+  // ===== TABLE HEADER =====
+  y += 35;
+
+  doc.setFillColor(230,230,230);
+  doc.rect(20, y, 170, 10, "F");
+
+  doc.setFont("helvetica","bold");
+  doc.text("Item", 22, y+7);
+  doc.text("Qty", 120, y+7);
+  doc.text("Price", 140, y+7);
+  doc.text("Total", 170, y+7);
+
+  // ===== PRODUCT ROW =====
+  y += 15;
+
+  doc.setFont("helvetica","normal");
+
+  const lines = doc.splitTextToSize(currentBillData.name, 90);
+
+  doc.text(lines, 22, y);
+  doc.text(String(qty), 122, y);
+  doc.text(`₹${price}`, 140, y);
+  doc.text(`₹${total}`, 170, y);
+
+  y += (lines.length * 6);
+
+  doc.line(20, y, 190, y);
+
+  // ===== TOTAL SECTION =====
+  y += 10;
+
+  doc.setFont("helvetica","bold");
+
+  doc.text("Subtotal:", 140, y);
+  doc.text(`₹${total}`, 170, y);
+
+  y += 6;
+  doc.text("Shipping:", 140, y);
+  doc.text("₹0", 170, y);
+
+  y += 6;
   doc.setFontSize(12);
-  doc.text(`Order ID: ${currentBillData.order_id}`, 20, 35);
-  doc.text(`Customer: ${username}`, 20, 45);
-  doc.text(`Product: ${currentBillData.name}`, 20, 55);
-  doc.text(`Quantity: ${currentBillData.quantity}`, 20, 65);
-  doc.text(`Price per unit: ₹${currentBillData.price_per_unit}`, 20, 75);
-  doc.text(`Total Price: ₹${currentBillData.total_price}`, 20, 85);
-  doc.text(`Order Date: ${currentBillData.order_date}`, 20, 95);
-  doc.save(`Order_${currentBillData.order_id}.pdf`);
+  doc.text("Grand Total:", 140, y);
+  doc.text(`₹${total}`, 170, y);
+
+  // ===== FOOTER =====
+  y += 20;
+
+  doc.setFontSize(10);
+  doc.setFont("helvetica","normal");
+
+  doc.text("Thank you for shopping with Bongo Basket!", 20, y);
+  doc.text("This is a system generated invoice.", 20, y+6);
+
+  doc.save(`Invoice_${currentBillData.order_id}.pdf`);
 }
 
 function logout(){
