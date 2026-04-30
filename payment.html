@@ -36,14 +36,12 @@ body{
   align-items:center;
   box-shadow:0 5px 15px rgba(0,0,0,0.2);
   border-radius:0 0 20px 20px;
-  margin-bottom:30px;
 }
 .header h2{margin:0; font-size:24px;}
 .header .user-info{
   font-weight:500;
   font-size:16px;
   margin-right:15px;
-  color:#fff;
 }
 .header .btns button{
   margin-left:10px;
@@ -60,6 +58,31 @@ body{
 .header .logout-btn{background:#ef4444;}
 .header .logout-btn:hover{background:#dc2626;}
 
+/* 🔥 OFFER BAR */
+.offer-bar{
+  width:100%;
+  overflow:hidden;
+  background:linear-gradient(to right,#ef4444,#f59e0b);
+}
+.offer-track{
+  display:flex;
+  width:max-content;
+  animation:moveRight 12s linear infinite;
+}
+.offer-text{
+  padding:10px 40px;
+  font-weight:700;
+  font-size:18px;
+  white-space:nowrap;
+  color:white;
+}
+
+/* LEFT → RIGHT */
+@keyframes moveRight{
+  0%{transform:translateX(-50%);}
+  100%{transform:translateX(100%);}
+}
+
 /* PAYMENT CONTAINER */
 .container{
   width:400px;
@@ -68,6 +91,7 @@ body{
   padding:30px;
   border-radius:20px;
   box-shadow:0 10px 30px rgba(0,0,0,0.3);
+  margin-top:25px;
 }
 
 h2{text-align:center;margin-bottom:20px;}
@@ -135,10 +159,16 @@ button.pay-btn:hover{transform:scale(1.05);}
   </div>
 </div>
 
+<!-- 🔥 OFFER BAR -->
+<div class="offer-bar">
+  <div class="offer-track">
+    <div class="offer-text">🎉 FLAT 50% OFF ON ALL PRODUCTS 🎉</div>
+    <div class="offer-text">🎉 FLAT 50% OFF ON ALL PRODUCTS 🎉</div>
+    <div class="offer-text">🎉 FLAT 50% OFF ON ALL PRODUCTS 🎉</div>
+  </div>
+</div>
 
-
-
-<!-- PAYMENT CONTAINER -->
+<!-- PAYMENT -->
 <div class="container">
   <h2>💳 Secure Payment</h2>
 
@@ -154,16 +184,13 @@ button.pay-btn:hover{transform:scale(1.05);}
 </div>
 
 <script>
-const API=" https://my-full-stack-ae3l.onrender.com/api";
+const API="https://my-full-stack-ae3l.onrender.com/api";
 const username = localStorage.getItem("username");
 
-// Redirect if not logged in
 if(!username){ window.location="login.html"; }
 
-// Show username in header
 document.getElementById("usernameDisplay").innerText = " Hello, " + username;
 
-// Load cart
 let cartTotal = 0;
 let deliveryCharge = 0;
 let totalAmount = 0;
@@ -190,7 +217,6 @@ async function loadCart(){
 
 loadCart();
 
-// Pay Now
 async function payNow(){
   const name=document.getElementById("name").value;
   const address=document.getElementById("address").value;
@@ -224,7 +250,6 @@ async function payNow(){
   rzp.open();
 }
 
-// Verify payment
 async function verifyPayment(res){
   await fetch(API+"/payment/verify",{
     method:"POST",
@@ -241,13 +266,11 @@ async function verifyPayment(res){
   window.location="orderhistory.html";
 }
 
-// LOGOUT
 function logout(){
   localStorage.clear();
   window.location.href="login.html";
 }
 
-// GO SHOP
 function goShop(){
   window.location.href="shop.html";
 }
