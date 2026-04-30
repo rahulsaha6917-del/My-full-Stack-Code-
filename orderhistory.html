@@ -8,7 +8,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <style>
-/* ===== YOUR UI (UNCHANGED) ===== */
 :root{
   --primary:#6366f1;
   --accent:#22c55e;
@@ -19,27 +18,16 @@
   --card-bg:#ffffff;
   --sidebar-bg:linear-gradient(to bottom,#6366f1,#22c55e);
 }
-
 *{ margin:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
-
-body{
-  display:flex;
-  background:var(--bg);
-  min-height:100vh;
-}
+body{ display:flex; background:var(--bg); min-height:100vh; }
 
 .sidebar{
   width:250px;
   background:var(--sidebar-bg);
   color:white;
-  display:flex;
-  flex-direction:column;
   padding:30px 20px;
-  border-radius:0 15px 15px 0;
 }
-
 .sidebar h2{ margin-bottom:30px; text-align:center; }
-
 .sidebar .nav-btn{
   background:rgba(255,255,255,0.2);
   border:none;
@@ -71,14 +59,12 @@ body{
   padding:20px;
   border-radius:15px;
 }
-
 .card img{
   width:120px;
   height:120px;
   object-fit:cover;
   border-radius:10px;
 }
-
 .price{ color:#6366f1; font-weight:bold; }
 
 .status{
@@ -127,7 +113,6 @@ body{
 </div>
 
 <div class="main-content">
-
   <div class="header">
     Welcome, <b id="user"></b>
     <button onclick="logout()">Logout</button>
@@ -139,7 +124,6 @@ body{
   </div>
 </div>
 
-<!-- BILL MODAL -->
 <div class="modal" id="billModal">
   <div class="modal-content">
     <h3>Order Bill</h3>
@@ -186,64 +170,83 @@ function showBill(order){
   document.getElementById("billModal").style.display="flex";
 }
 
-/* 🔥 COLORFUL REALISTIC INVOICE */
+/* 🔥 AMAZON STYLE CLEAN INVOICE */
 function downloadBill(){
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
 
-  const price = Number(currentBillData.price_per_unit);
-  const total = Number(currentBillData.total_price);
-  const qty = Number(currentBillData.quantity);
+  const price = Number(currentBillData.price_per_unit || 0);
+  const total = Number(currentBillData.total_price || 0);
+  const qty = Number(currentBillData.quantity || 0);
 
-  // HEADER
-  doc.setFillColor(34,197,94); // green
-  doc.rect(0,0,210,30,"F");
+  let y = 20;
 
-  doc.setTextColor(255,255,255);
+  doc.setFont("helvetica","bold");
   doc.setFontSize(18);
-  doc.text("BONGO BASKET", 20, 18);
+  doc.text("BONGO BASKET", 20, y);
+
+  doc.setFontSize(10);
+  doc.setFont("helvetica","normal");
+  doc.text("Tax Invoice / Bill of Supply", 20, y+6);
+
+  doc.line(20, y+10, 190, y+10);
+
+  y += 20;
 
   doc.setFontSize(11);
-  doc.text("Premium Invoice", 20, 25);
+  doc.text(`Order ID: ${currentBillData.order_id}`, 20, y);
+  doc.text(`Order Date: ${currentBillData.order_date}`, 20, y+6);
 
-  doc.setTextColor(0,0,0);
+  doc.text(`Customer: ${username}`, 120, y);
+  doc.text(`Payment: Prepaid`, 120, y+6);
 
-  // DETAILS
-  doc.text(`Order ID: ${currentBillData.order_id}`, 20, 45);
-  doc.text(`Customer: ${username}`, 20, 52);
-  doc.text(`Date: ${currentBillData.order_date}`, 20, 59);
+  doc.line(20, y+12, 190, y+12);
 
-  // TABLE HEADER
-  doc.setFillColor(99,102,241);
-  doc.rect(20,70,170,10,"F");
+  y += 20;
 
-  doc.setTextColor(255,255,255);
-  doc.text("Product", 22, 77);
-  doc.text("Qty", 110, 77);
-  doc.text("Price", 130, 77);
-  doc.text("Total", 160, 77);
+  doc.setFont("helvetica","bold");
+  doc.text("Item", 20, y);
+  doc.text("Qty", 120, y);
+  doc.text("Price", 140, y);
+  doc.text("Total", 170, y);
 
-  doc.setTextColor(0,0,0);
+  doc.line(20, y+2, 190, y+2);
 
-  // ROW
-  doc.rect(20,80,170,12);
-  doc.text(currentBillData.name, 22, 88);
-  doc.text(String(qty), 112, 88);
-  doc.text(`₹${price}`, 130, 88);
-  doc.text(`₹${total}`, 160, 88);
+  y += 10;
 
-  // TOTAL BOX
-  doc.setFillColor(240,240,240);
-  doc.rect(120,100,70,25,"F");
+  doc.setFont("helvetica","normal");
 
+  const productLines = doc.splitTextToSize(currentBillData.name, 90);
+
+  doc.text(productLines, 20, y);
+  doc.text(String(qty), 120, y);
+  doc.text(`₹${price}`, 140, y);
+  doc.text(`₹${total}`, 170, y);
+
+  y += productLines.length * 6;
+
+  doc.line(20, y+2, 190, y+2);
+
+  y += 10;
+
+  doc.setFont("helvetica","bold");
+  doc.text("Subtotal:", 140, y);
+  doc.text(`₹${total}`, 170, y);
+
+  y += 6;
+  doc.text("Shipping:", 140, y);
+  doc.text("₹0", 170, y);
+
+  y += 6;
   doc.setFontSize(12);
-  doc.text("Grand Total", 125, 112);
-  doc.setFontSize(16);
-  doc.text(`₹${total}`, 145, 120);
+  doc.text("Grand Total:", 140, y);
+  doc.text(`₹${total}`, 170, y);
 
-  // FOOTER
-  doc.setFontSize(11);
-  doc.text("Thank you for shopping with us!", 20, 150);
+  y += 20;
+  doc.setFontSize(10);
+  doc.setFont("helvetica","normal");
+
+  doc.text("Thank you for shopping with Bongo Basket!", 20, y);
 
   doc.save(`Invoice_${currentBillData.order_id}.pdf`);
 }
