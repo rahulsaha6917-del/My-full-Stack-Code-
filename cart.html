@@ -54,7 +54,7 @@ body{background:var(--bg); display:flex; height:100vh; overflow:hidden;}
   overflow-y:auto;
 }
 
-/* 🔥 SINGLE MOVING HEADING */
+/* 🔥 LEFT → RIGHT MOVING HEADING */
 .offer-bar{
   width:100%;
   overflow:hidden;
@@ -62,11 +62,15 @@ body{background:var(--bg); display:flex; height:100vh; overflow:hidden;}
   border-radius:10px;
   margin-bottom:15px;
 }
+
+/* track starts from LEFT outside and moves RIGHT */
 .offer-track{
   display:flex;
   width:max-content;
-  animation:scrollLeft 12s linear infinite;
+  animation:moveRight 12s linear infinite;
 }
+
+/* duplicate text for smooth loop */
 .offer-text{
   color:white;
   font-weight:700;
@@ -75,10 +79,10 @@ body{background:var(--bg); display:flex; height:100vh; overflow:hidden;}
   white-space:nowrap;
 }
 
-/* CONTINUOUS SMOOTH */
-@keyframes scrollLeft{
-  0%{transform:translateX(0);}
-  100%{transform:translateX(-50%);}
+/* 🔥 TRUE LEFT → RIGHT */
+@keyframes moveRight{
+  0%{transform:translateX(-100%);}
+  100%{transform:translateX(100%);}
 }
 
 /* HEADER */
@@ -179,7 +183,7 @@ body{background:var(--bg); display:flex; height:100vh; overflow:hidden;}
 <!-- MAIN -->
 <div class="main-content">
 
-  <!-- 🔥 NEW SINGLE MOVING HEADING -->
+  <!-- 🔥 LEFT → RIGHT BANNER -->
   <div class="offer-bar">
     <div class="offer-track">
       <div class="offer-text">🛍️ SHOP NOW & GET ULTIMATE PRIZES | LIMITED TIME OFFER 🚀</div>
