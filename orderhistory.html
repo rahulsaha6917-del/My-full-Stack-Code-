@@ -458,25 +458,32 @@ function downloadBill(){
   doc.setFont("helvetica","bold");
   doc.setFontSize(11);
 
-  doc.text("Subtotal:", 130, y);
-  doc.text(`INR ${total}`, 190, y, { align: "right" });
+  const subtotal = Number(currentBillData.total_price || 0);
+const delivery = 200;
+const grandTotal = subtotal + delivery;
 
-  y += 8;
-  doc.text("Shipping:", 130, y);
-  doc.text("INR 0", 190, y, { align: "right" });
+// Subtotal
+doc.text("Subtotal:", 130, y);
+doc.text(`INR ${subtotal}`, 190, y, { align: "right" });
 
-  y += 10;
+y += 8;
 
-  // Divider
-  doc.setLineWidth(0.5);
-  doc.line(130, y-4, 190, y-4);
+// Delivery charge
+doc.text("Delivery:", 130, y);
+doc.text(`INR ${delivery}`, 190, y, { align: "right" });
 
-  // Grand Total
-  doc.setFontSize(13);
-  doc.setFont("helvetica","bold");
+y += 10;
 
-  doc.text("Grand Total:", 130, y);
-  doc.text(`INR ${total}`, 190, y, { align: "right" });
+// Divider
+doc.setLineWidth(0.5);
+doc.line(130, y-4, 190, y-4);
+
+// Grand Total
+doc.setFontSize(13);
+doc.setFont("helvetica","bold");
+
+doc.text("Grand Total:", 130, y);
+doc.text(`INR ${grandTotal}`, 190, y, { align: "right" });
 
   // ===== FOOTER =====
   y += 25;
