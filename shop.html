@@ -13,7 +13,6 @@
   --dark:#0f172a;
   --sidebar:#020617;
   --bg:#eef2f7;
-  --card:#ffffff;
 }
 
 *{box-sizing:border-box;margin:0;font-family:'Poppins',sans-serif;}
@@ -27,24 +26,21 @@ body{
 .offer-bar{
   position:fixed;
   top:0;
-  left:0;
   width:100%;
-  overflow:hidden;
   background:#ef4444;
   color:white;
   z-index:1000;
+  overflow:hidden;
 }
 
 .offer-track{
   display:flex;
-  white-space:nowrap;
   animation:moveText 12s linear infinite;
 }
 
 .offer-text{
   padding:10px 40px;
   font-weight:700;
-  font-size:18px;
 }
 
 @keyframes moveText{
@@ -59,31 +55,39 @@ body{
   background:var(--sidebar);
   color:white;
   position:fixed;
-  padding:20px;
-  display:flex;
-  flex-direction:column;
-  gap:20px;
   top:40px;
   left:0;
+  padding:20px;
   transition:0.3s;
-  z-index:999;
+  z-index:1001;
 }
 
-.sidebar h2{color:var(--primary);}
+.sidebar.hide{left:-260px;}
+.sidebar.show{left:0;}
 
 .sidebar a{
+  display:block;
+  padding:10px;
   color:white;
   text-decoration:none;
-  padding:10px;
   border-radius:8px;
 }
 
 .sidebar a:hover{background:var(--primary);}
 
-/* MOBILE SIDEBAR HIDDEN */
-.sidebar.hide{
-  left:-260px;
+/* OVERLAY */
+.overlay{
+  position:fixed;
+  top:40px;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.4);
+  display:none;
+  z-index:1000;
 }
+
+.overlay.show{display:block;}
 
 /* MAIN */
 .main{
@@ -100,141 +104,90 @@ nav{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  box-shadow:0 4px 10px rgba(0,0,0,0.1);
 }
 
-/* MENU BUTTON */
 .menu-btn{
+  display:none;
   font-size:22px;
   cursor:pointer;
-  display:none;
-  margin-right:10px;
 }
 
 .search-box{
   padding:8px 12px;
   border-radius:20px;
   border:1px solid #ddd;
-  width:250px;
 }
 
-.cart-icon{position:relative;cursor:pointer;font-size:20px;}
+.cart-icon{cursor:pointer;}
 
 .badge{
-  position:absolute;
-  top:-6px;
-  right:-10px;
   background:var(--accent);
   padding:2px 6px;
   border-radius:50%;
   font-size:11px;
+  position:relative;
+  top:-10px;
 }
 
-.username-display{
-  margin-left:20px;
-  font-weight:600;
-  color:var(--dark);
-}
-
-/* CONTENT */
+/* PRODUCTS */
 .container{padding:30px 5%;}
-
-.category-bar{
-  display:flex;
-  gap:10px;
-  margin-bottom:20px;
-  flex-wrap:wrap;
-}
-
-.category-btn{
-  padding:8px 16px;
-  border:none;
-  background:var(--dark);
-  color:white;
-  border-radius:20px;
-  cursor:pointer;
-}
-
-.category-btn:hover{background:var(--primary);}
 
 .product-grid{
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
-  gap:25px;
+  gap:20px;
 }
 
 .card{
   background:white;
-  border-radius:15px;
   padding:15px;
-  box-shadow:0 6px 15px rgba(0,0,0,0.08);
+  border-radius:10px;
 }
 
-.img-box{
-  height:150px;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-}
-
-.img-box img{
-  max-width:100%;
-  max-height:100%;
-}
-
-.price{margin:10px 0;}
-
-.add-btn{
-  background:var(--primary);
-  color:white;
-  border:none;
-  padding:10px;
-  border-radius:8px;
-  width:100%;
-  cursor:pointer;
-}
-
-/* 📱 MOBILE RESPONSIVE */
+/* 📱 MOBILE */
 @media(max-width:800px){
 
-  .menu-btn{
-    display:inline-block;
-  }
+  .menu-btn{display:inline-block;}
 
-  .sidebar{
-    left:-260px;
-  }
+  .sidebar{left:-260px;}
+  .main{margin-left:0;}
 
-  .sidebar.show{
-    left:0;
-  }
+  .overlay.show{display:block;}
 
-  .main{
-    margin-left:0;
-  }
+  /* bottom nav space */
+  body{padding-bottom:60px;}
+}
 
-  .search-box{
-    width:140px;
-  }
+/* 📱 BOTTOM NAV */
+.bottom-nav{
+  position:fixed;
+  bottom:0;
+  width:100%;
+  background:white;
+  display:none;
+  justify-content:space-around;
+  padding:10px 0;
+  box-shadow:0 -2px 10px rgba(0,0,0,0.1);
+  z-index:1002;
+}
 
-  nav{
-    padding:10px;
-  }
+.bottom-nav a{
+  text-decoration:none;
+  color:#333;
+  font-size:14px;
+  text-align:center;
+}
 
-  .username-display{
-    display:none;
-  }
+@media(max-width:800px){
+  .bottom-nav{display:flex;}
 }
 </style>
 </head>
 
 <body>
 
-<!-- 🔥 OFFER BAR -->
 <div class="offer-bar">
   <div class="offer-track">
-    <div class="offer-text">🔥 FLAT 50% OFF 🔥</div>
-    <div class="offer-text">🔥 FLAT 50% OFF 🔥</div>
     <div class="offer-text">🔥 FLAT 50% OFF 🔥</div>
     <div class="offer-text">🔥 FLAT 50% OFF 🔥</div>
   </div>
@@ -246,130 +199,73 @@ nav{
   <a href="cart.html">❤️ Cart</a>
   <a href="orderhistory.html">📦 Orders</a>
   <a href="payment.html">💳 Payment</a>
-  <a href="#" onclick="logout()">🚪 Logout</a>
 </div>
+
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 
 <div class="main">
 
 <nav>
-  <div>
-    <span class="menu-btn" onclick="toggleSidebar()">☰</span>
-    <input type="text" class="search-box" placeholder="Search..." onkeyup="searchProducts(this.value)">
-    <span class="username-display" id="username-display"></span>
-  </div>
-
-  <div class="cart-icon" onclick="window.location.href='cart.html'">
-    🛒 <span class="badge" id="cart-count">0</span>
-  </div>
+  <span class="menu-btn" onclick="openSidebar()">☰</span>
+  <input type="text" class="search-box" placeholder="Search...">
+  <div class="cart-icon">🛒 <span class="badge">0</span></div>
 </nav>
 
 <div class="container">
-  <div class="category-bar" id="category-bar"></div>
-  <div class="product-grid" id="grid"></div>
+  <div class="product-grid">
+    <div class="card">Product</div>
+  </div>
 </div>
 
+</div>
+
+<!-- 📱 Bottom Navigation -->
+<div class="bottom-nav">
+  <a href="shop.html">🏠<br>Home</a>
+  <a href="cart.html">🛒<br>Cart</a>
+  <a href="orderhistory.html">📦<br>Orders</a>
+  <a href="payment.html">💳<br>Pay</a>
 </div>
 
 <script>
-const API_BASE="https://my-full-stack-ae3l.onrender.com/api";
-const currentUsername=localStorage.getItem("username");
-let allProducts=[];
+const sidebar=document.getElementById("sidebar");
+const overlay=document.getElementById("overlay");
 
-window.onload=function(){
-  if(!currentUsername){
-    window.location.href="login.html";
-    return;
+/* OPEN */
+function openSidebar(){
+  sidebar.classList.add("show");
+  overlay.classList.add("show");
+}
+
+/* CLOSE */
+function closeSidebar(){
+  sidebar.classList.remove("show");
+  overlay.classList.remove("show");
+}
+
+/* AUTO CLOSE CLICK OUTSIDE */
+overlay.addEventListener("click",closeSidebar);
+
+/* 📱 SWIPE GESTURE */
+let startX=0;
+
+document.addEventListener("touchstart",e=>{
+  startX=e.touches[0].clientX;
+});
+
+document.addEventListener("touchend",e=>{
+  let endX=e.changedTouches[0].clientX;
+
+  /* swipe right (open) */
+  if(startX<50 && endX>120){
+    openSidebar();
   }
-  document.getElementById("username-display").innerText="Hello, "+currentUsername;
-  loadProducts();
-  loadCategories();
-  fetchCartCount();
-};
 
-function toggleSidebar(){
-  document.getElementById("sidebar").classList.toggle("show");
-}
-
-async function loadProducts(){
-  const res=await fetch(API_BASE+"/products");
-  const data=await res.json();
-  allProducts=data.products||data;
-  renderProducts(allProducts);
-}
-
-function searchProducts(q){
-  renderProducts(allProducts.filter(p=>p.name.toLowerCase().includes(q.toLowerCase())));
-}
-
-async function loadCategories(){
-  const res=await fetch(API_BASE+"/categories");
-  const data=await res.json();
-  const bar=document.getElementById("category-bar");
-  bar.innerHTML='<button class="category-btn" onclick="renderProducts(allProducts)">All</button>';
-
-  data.forEach(cat=>{
-    const btn=document.createElement("button");
-    btn.className="category-btn";
-    btn.innerText=cat.category_name;
-    btn.onclick=()=>renderProducts(allProducts.filter(p=>p.category===cat.category_name));
-    bar.appendChild(btn);
-  });
-}
-
-function renderProducts(products){
-  const grid=document.getElementById("grid");
-  if(!products.length){grid.innerHTML="No products";return;}
-
-  grid.innerHTML=products.map(p=>{
-    const discounted=(p.price*0.5).toFixed(0);
-
-    return `
-    <div class="card">
-      <div class="img-box">
-        <img src="${p.images?.[0]||'https://via.placeholder.com/150'}">
-      </div>
-
-      <h4>${p.name}</h4>
-
-      <div class="price">
-        <span style="text-decoration:line-through;color:#999;">₹${p.price}</span><br>
-        <span style="color:#22c55e;">₹${discounted} (50% OFF)</span>
-      </div>
-
-      <button class="add-btn" onclick="addToCart(${p.product_id})">Add</button>
-    </div>
-    `;
-  }).join("");
-}
-
-async function addToCart(productId){
-  const product=allProducts.find(p=>p.product_id===productId);
-  const discounted=(product.price*0.5).toFixed(0);
-
-  await fetch(API_BASE+"/cart/add",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({
-      username:currentUsername,
-      productId,
-      quantity:1,
-      price:discounted
-    })
-  });
-
-  fetchCartCount();
-}
-
-async function fetchCartCount(){
-  const res=await fetch(API_BASE+"/cart/items/count?username="+currentUsername);
-  const count=await res.json();
-  document.getElementById("cart-count").innerText=count;
-}
-
-function logout(){
-  localStorage.clear();
-  window.location.href="login.html";
-}
+  /* swipe left (close) */
+  if(startX>200 && endX<100){
+    closeSidebar();
+  }
+});
 </script>
 
 </body>
