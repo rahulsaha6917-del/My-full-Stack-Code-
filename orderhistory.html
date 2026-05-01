@@ -349,16 +349,27 @@ async function loadOrders(){
 
 function showBill(order){
   currentBillData = order;
+
+  const pricePerUnit = Number(order.price_per_unit || 0);
+  const qty = Number(order.quantity || 0);
+  const delivery = 200;
+
+  const subtotal = pricePerUnit * qty;
+  const totalAmount = subtotal + delivery;
+
   let html = `
     <p><b>Order ID:</b> ${order.order_id}</p>
     <p><b>Product:</b> ${order.name}</p>
     <p><b>Quantity:</b> ${order.quantity}</p>
-    <p><b>Price per unit:</b> ₹${order.price_per_unit}</p>
-    
-   <p><b>Total Price:</b> ₹${Number(order.total_price) + 200}</p>
+
+    <p><b>Price per unit:</b> ₹${pricePerUnit}</p>
+    <p><b>Delivery Charge:</b> ₹${delivery}</p>
+    <p><b>Total Amount:</b> ₹${totalAmount}</p>
+
     <p><b>Order Date:</b> ${order.order_date}</p>
     <p><b>Customer:</b> ${username}</p>
   `;
+
   document.getElementById("billDetails").innerHTML = html;
   document.getElementById("billModal").style.display = "flex";
 }
