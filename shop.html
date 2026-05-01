@@ -23,7 +23,7 @@ body{
   background:var(--bg);
 }
 
-/* 🔥 MOVING 50% OFF BAR */
+/* 🔥 OFFER BAR */
 .offer-bar{
   position:fixed;
   top:0;
@@ -64,6 +64,9 @@ body{
   flex-direction:column;
   gap:20px;
   top:40px;
+  left:0;
+  transition:0.3s;
+  z-index:999;
 }
 
 .sidebar h2{color:var(--primary);}
@@ -77,11 +80,17 @@ body{
 
 .sidebar a:hover{background:var(--primary);}
 
+/* MOBILE SIDEBAR HIDDEN */
+.sidebar.hide{
+  left:-260px;
+}
+
 /* MAIN */
 .main{
   margin-left:240px;
   width:100%;
   margin-top:40px;
+  transition:0.3s;
 }
 
 /* NAV */
@@ -92,6 +101,14 @@ nav{
   justify-content:space-between;
   align-items:center;
   box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* MENU BUTTON */
+.menu-btn{
+  font-size:22px;
+  cursor:pointer;
+  display:none;
+  margin-right:10px;
 }
 
 .search-box{
@@ -113,7 +130,11 @@ nav{
   font-size:11px;
 }
 
-.username-display{margin-left:20px;font-weight:600;color:var(--dark);}
+.username-display{
+  margin-left:20px;
+  font-weight:600;
+  color:var(--dark);
+}
 
 /* CONTENT */
 .container{padding:30px 5%;}
@@ -173,16 +194,43 @@ nav{
   cursor:pointer;
 }
 
+/* 📱 MOBILE RESPONSIVE */
 @media(max-width:800px){
-  .sidebar{display:none;}
-  .main{margin-left:0;}
+
+  .menu-btn{
+    display:inline-block;
+  }
+
+  .sidebar{
+    left:-260px;
+  }
+
+  .sidebar.show{
+    left:0;
+  }
+
+  .main{
+    margin-left:0;
+  }
+
+  .search-box{
+    width:140px;
+  }
+
+  nav{
+    padding:10px;
+  }
+
+  .username-display{
+    display:none;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<!-- 🔥 MOVING TEXT -->
+<!-- 🔥 OFFER BAR -->
 <div class="offer-bar">
   <div class="offer-track">
     <div class="offer-text">🔥 FLAT 50% OFF 🔥</div>
@@ -192,7 +240,7 @@ nav{
   </div>
 </div>
 
-<div class="sidebar">
+<div class="sidebar" id="sidebar">
   <h2>BONGO</h2>
   <a href="shop.html">🏠 Dashboard</a>
   <a href="cart.html">❤️ Cart</a>
@@ -205,9 +253,11 @@ nav{
 
 <nav>
   <div>
+    <span class="menu-btn" onclick="toggleSidebar()">☰</span>
     <input type="text" class="search-box" placeholder="Search..." onkeyup="searchProducts(this.value)">
     <span class="username-display" id="username-display"></span>
   </div>
+
   <div class="cart-icon" onclick="window.location.href='cart.html'">
     🛒 <span class="badge" id="cart-count">0</span>
   </div>
@@ -235,6 +285,10 @@ window.onload=function(){
   loadCategories();
   fetchCartCount();
 };
+
+function toggleSidebar(){
+  document.getElementById("sidebar").classList.toggle("show");
+}
 
 async function loadProducts(){
   const res=await fetch(API_BASE+"/products");
@@ -288,7 +342,6 @@ function renderProducts(products){
   }).join("");
 }
 
-/* ✅ UPDATED (IMPORTANT) */
 async function addToCart(productId){
   const product=allProducts.find(p=>p.product_id===productId);
   const discounted=(product.price*0.5).toFixed(0);
@@ -300,7 +353,7 @@ async function addToCart(productId){
       username:currentUsername,
       productId,
       quantity:1,
-      price:discounted   // 🔥 send discounted price
+      price:discounted
     })
   });
 
