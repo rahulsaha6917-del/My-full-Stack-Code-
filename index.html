@@ -21,14 +21,16 @@ body{
   align-items:center;
   justify-content:flex-start;
 
-  /* ✅ USING LOCAL background.png FILE */
+  /* ✅ BROWN THEME BACKGROUND */
   background:
-    linear-gradient(135deg, rgba(102,126,234,0.7), rgba(118,75,162,0.7)),
+    linear-gradient(135deg, rgba(121, 85, 72, 0.55), rgba(62, 39, 35, 0.55)),
     url('background.png');
 
   background-size:cover;
   background-position:center;
   background-repeat:no-repeat;
+
+  filter: brightness(1.15) contrast(1.05);
 }
 
 /* Header */
@@ -60,6 +62,7 @@ header{
   box-shadow: 0 20px 50px rgba(0,0,0,0.25);
   transition: transform 0.3s, box-shadow 0.3s;
 }
+
 .container:hover{
   transform: translateY(-5px);
   box-shadow: 0 25px 60px rgba(0,0,0,0.35);
@@ -87,11 +90,12 @@ button{
   font-weight:600;
   cursor:pointer;
   color:white;
-  background: linear-gradient(90deg,#ff758c,#ff7eb3);
+  background: linear-gradient(90deg,#ff8a65,#ff7043);
   transition:0.3s;
 }
+
 button:hover{
-  background: linear-gradient(90deg,#ff7eb3,#ff758c);
+  background: linear-gradient(90deg,#ff7043,#ff8a65);
   transform: translateY(-2px);
 }
 
@@ -107,6 +111,7 @@ button:hover{
 }
 </style>
 </head>
+
 <body>
 
 <header>Bongo Basket</header>
