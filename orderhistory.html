@@ -338,6 +338,26 @@ async function loadOrders(){
       return;
     }
 
+    // 🔥 FORCE SHOW LOGOUT BUTTON (JS FIX)
+window.addEventListener("DOMContentLoaded", () => {
+  const btn = document.querySelector(".logout-btn");
+  const header = document.querySelector(".header");
+
+  if(btn && header){
+    // Ensure button is visible
+    btn.style.display = "inline-block";
+    btn.style.position = "relative";
+    btn.style.zIndex = "10";
+
+    // Force header layout fix via JS
+    header.style.display = "flex";
+    header.style.justifyContent = "space-between";
+    header.style.alignItems = "center";
+
+    // Prevent overflow hiding
+    header.style.overflow = "visible";
+  }
+});
     const groupedOrders = groupOrders(products);
 
     document.getElementById("orders").innerHTML = groupedOrders.map(orderGroup => {
