@@ -313,6 +313,20 @@ if(!username){ window.location = "login.html"; }
 
 document.getElementById("user").innerText = username;
 
+// GROUP BY ORDER ID
+function groupOrders(products){
+  const grouped = {};
+
+  products.forEach(p => {
+    if(!grouped[p.order_id]){
+      grouped[p.order_id] = [];
+    }
+    grouped[p.order_id].push(p);
+  });
+
+  return Object.values(grouped);
+}
+
 async function loadOrders(){
   try{
     const res = await fetch(API + "/orders?username=" + username);
@@ -325,22 +339,38 @@ async function loadOrders(){
       return;
     }
 
-    document.getElementById("orders").innerHTML = products.map(p => `
+    const groupedOrders = groupOrders(products);
+
+    document.getElementById("orders").innerHTML = groupedOrders.map(orderGroup => {
+
+      const first = orderGroup[0];
+      const delivery = 200;
+
+      let subtotal = orderGroup.reduce((sum, item) => {
+        return sum + (Number(item.price_per_unit) * Number(item.quantity));
+      }, 0);
+
+      const grandTotal = subtotal + delivery;
+
+      return `
       <div class="card">
-        <img src="${p.image_url || 'https://via.placeholder.com/120'}">
+        <img src="${first.image_url || 'https://via.placeholder.com/120'}">
         <div class="details">
-          <h3>${p.name}</h3>
-          <p>${p.description || ''}</p>
-          <p>Quantity: ${p.quantity}</p>
-          <p class="price">₹${Number(p.total_price) + 200}</p>
-          
-          <p>Order ID: ${p.order_id}</p>
-          <p>Date: ${p.order_date}</p>
+          <h3>Order ID: ${first.order_id}</h3>
+          <p>Total Items: ${orderGroup.length}</p>
+          <p>Date: ${first.order_date}</p>
+
+          <p class="price">₹${grandTotal}</p>
+
           <span class="status delivered">Delivered</span>
-          <button class="nav-btn" onclick='showBill(${JSON.stringify(p)})'>Show Bill</button>
+
+          <button class="nav-btn" onclick='showBill(${JSON.stringify(orderGroup)})'>
+            Show Bill
+          </button>
         </div>
       </div>
-    `).join("");
+      `;
+    }).join("");
 
   } catch(e){
     document.getElementById("orders").innerHTML =
@@ -348,53 +378,62 @@ async function loadOrders(){
   }
 }
 
-function showBill(order){
-  currentBillData = order;
+// SHOW BILL (MODAL)
+function showBill(orderGroup){
+  currentBillData = orderGroup;
 
-  const pricePerUnit = Number(order.price_per_unit || 0);
-  const qty = Number(order.quantity || 0);
   const delivery = 200;
+  let subtotal = 0;
 
-  const subtotal = pricePerUnit * qty;
-  const totalAmount = subtotal + delivery;
+  let itemsHTML = orderGroup.map(item => {
+    const price = Number(item.price_per_unit);
+    const qty = Number(item.quantity);
+    const total = price * qty;
+
+    subtotal += total;
+
+    return `
+      <p><b>${item.name}</b> (x${qty}) - ₹${total}</p>
+      <p>Price/unit: ₹${price}</p>
+      <hr>
+    `;
+  }).join("");
+
+  const grandTotal = subtotal + delivery;
 
   let html = `
-    <p><b>Order ID:</b> ${order.order_id}</p>
-    <p><b>Product:</b> ${order.name}</p>
-    <p><b>Quantity:</b> ${order.quantity}</p>
-
-    <p><b>Price per unit:</b> ₹${pricePerUnit}</p>
-    <p><b>Delivery Charge:</b> ₹${delivery}</p>
-    <p><b>Total Amount:</b> ₹${totalAmount}</p>
-
-    <p><b>Order Date:</b> ${order.order_date}</p>
+    <p><b>Order ID:</b> ${orderGroup[0].order_id}</p>
+    <p><b>Date:</b> ${orderGroup[0].order_date}</p>
     <p><b>Customer:</b> ${username}</p>
+
+    <hr>
+    ${itemsHTML}
+
+    <p><b>Subtotal:</b> ₹${subtotal}</p>
+    <p><b>Delivery Charge:</b> ₹${delivery}</p>
+    <p><b>Total Amount:</b> ₹${grandTotal}</p>
   `;
 
   document.getElementById("billDetails").innerHTML = html;
   document.getElementById("billModal").style.display = "flex";
 }
 
-
 function closeModal(){
   document.getElementById("billModal").style.display = "none";
 }
 
-
+// DOWNLOAD PDF
 function downloadBill(){
   if(!currentBillData) return;
 
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
 
-  const price = Number(currentBillData.price_per_unit || 0);
-  
-  const total = Number(currentBillData.total_price || 0) + 200;
-  const qty = Number(currentBillData.quantity || 0);
+  const delivery = 200;
 
   let y = 20;
 
-  // ===== HEADER =====
+  // HEADER
   doc.setFillColor(79,70,229);
   doc.rect(0,0,210,40,"F");
 
@@ -408,85 +447,79 @@ function downloadBill(){
 
   doc.setTextColor(0,0,0);
 
-  // ===== BILLING DETAILS =====
+  // DETAILS
   y = 55;
 
   doc.setFont("helvetica","bold");
-  doc.setFontSize(12);
   doc.text("Billing Details", 20, y);
 
   doc.setFont("helvetica","normal");
-  doc.setFontSize(11);
 
   doc.text(`Customer: ${username}`, 20, y+8);
-  doc.text(`Order ID: ${currentBillData.order_id}`, 20, y+15);
-  doc.text(`Date: ${currentBillData.order_date}`, 20, y+22);
-  doc.text(`Payment: Prepaid`, 20, y+29);
+  doc.text(`Order ID: ${currentBillData[0].order_id}`, 20, y+15);
+  doc.text(`Date: ${currentBillData[0].order_date}`, 20, y+22);
 
-  // ===== TABLE HEADER =====
-  y += 45;
+  // TABLE HEADER
+  y += 40;
 
   doc.setFillColor(240,240,240);
   doc.rect(20, y, 170, 12, "F");
 
   doc.setFont("helvetica","bold");
   doc.text("Item", 22, y+8);
-  doc.text("Qty", 115, y+8);
-  doc.text("Price", 140, y+8);
+  doc.text("Qty", 110, y+8);
+  doc.text("Price", 135, y+8);
   doc.text("Total", 165, y+8);
 
-  // ===== PRODUCT ROW =====
   y += 18;
+
+  let subtotal = 0;
 
   doc.setFont("helvetica","normal");
 
-  const lines = doc.splitTextToSize(currentBillData.name, 85);
+  currentBillData.forEach(item => {
+    const price = Number(item.price_per_unit);
+    const qty = Number(item.quantity);
+    const total = price * qty;
 
-  doc.text(lines, 22, y);
-  doc.text(String(qty), 115, y);
-  doc.text(`INR ${price}`, 140, y);
-  doc.text(`INR ${total}`, 165, y);
+    subtotal += total;
 
-  y += lines.length * 6;
+    const lines = doc.splitTextToSize(item.name, 80);
 
-  // Line after product
-  doc.setLineWidth(0.3);
-  doc.line(20, y, 190, y);
+    doc.text(lines, 22, y);
+    doc.text(String(qty), 110, y);
+    doc.text(`INR ${price}`, 135, y);
+    doc.text(`INR ${total}`, 165, y);
 
-  // ===== TOTAL SECTION (FINAL FIXED) =====
-  y += 12;
+    y += lines.length * 6 + 6;
+  });
+
+  // TOTAL SECTION
+  y += 10;
+
+  const grandTotal = subtotal + delivery;
 
   doc.setFont("helvetica","bold");
-  doc.setFontSize(11);
 
-  const subtotal = Number(currentBillData.total_price || 0);
-const delivery = 200;
-const grandTotal = subtotal + delivery;
+  doc.text("Subtotal:", 130, y);
+  doc.text(`INR ${subtotal}`, 190, y, { align: "right" });
 
-// Subtotal
-doc.text("Subtotal:", 130, y);
-doc.text(`INR ${subtotal}`, 190, y, { align: "right" });
+  y += 8;
 
-y += 8;
+  doc.text("Delivery Charge:", 130, y);
+  doc.text(`INR ${delivery}`, 190, y, { align: "right" });
 
-// Delivery charge
-doc.text("Delivery:", 130, y);
-doc.text(`INR ${delivery}`, 190, y, { align: "right" });
+  y += 10;
 
-y += 10;
+  doc.setLineWidth(0.5);
+  doc.line(130, y-4, 190, y-4);
 
-// Divider
-doc.setLineWidth(0.5);
-doc.line(130, y-4, 190, y-4);
+  doc.setFontSize(13);
 
-// Grand Total
-doc.setFontSize(13);
-doc.setFont("helvetica","bold");
+  doc.text("Grand Total:", 130, y);
+  doc.text(`INR ${grandTotal}`, 190, y, { align: "right" });
 
-doc.text("Grand Total:", 130, y);
-doc.text(`INR ${grandTotal}`, 190, y, { align: "right" });
-
-  // ===== FOOTER =====
+  // FOOTER
   y += 25;
 
   doc.setFontSize(10);
@@ -495,7 +528,7 @@ doc.text(`INR ${grandTotal}`, 190, y, { align: "right" });
   doc.text("Thank you for shopping with Bongo Basket!", 20, y);
   doc.text("This is a system-generated invoice.", 20, y+6);
 
-  doc.save(`Invoice_${currentBillData.order_id}.pdf`);
+  doc.save(`Invoice_${currentBillData[0].order_id}.pdf`);
 }
 
 function logout(){
@@ -505,6 +538,3 @@ function logout(){
 
 loadOrders();
 </script>
-
-</body>
-</html>
