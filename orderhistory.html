@@ -377,7 +377,7 @@ window.addEventListener("DOMContentLoaded", () => {
         <div class="details">
           <h3>Order ID: ${first.order_id}</h3>
           <p>Total Items: ${orderGroup.length}</p>
-          <p>Date: ${first.order_date}</p>
+          <p>Date: ${formatDateToIST(first.order_date)}</p>
 
           <p class="price">₹${grandTotal}</p>
 
@@ -422,7 +422,7 @@ function showBill(orderGroup){
 
   let html = `
     <p><b>Order ID:</b> ${orderGroup[0].order_id}</p>
-    <p><b>Date:</b> ${orderGroup[0].order_date}</p>
+   <p><b>Date:</b> ${formatDateToIST(orderGroup[0].order_date)}</p>
     <p><b>Customer:</b> ${username}</p>
 
     <hr>
@@ -476,7 +476,7 @@ function downloadBill(){
 
   doc.text(`Customer: ${username}`, 20, y+8);
   doc.text(`Order ID: ${currentBillData[0].order_id}`, 20, y+15);
-  doc.text(`Date: ${currentBillData[0].order_date}`, 20, y+22);
+doc.text(`Date: ${formatDateToIST(currentBillData[0].order_date)}`, 20, y+22);
 
   // TABLE HEADER
   y += 40;
