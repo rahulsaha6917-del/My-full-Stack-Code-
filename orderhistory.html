@@ -397,7 +397,12 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 }
 function formatDateToIST(dateString){
-  const date = new Date(dateString);
+  if(!dateString) return "";
+
+  // Fix: convert "YYYY-MM-DD HH:mm:ss" → ISO format
+  const fixed = dateString.replace(" ", "T");
+
+  const date = new Date(fixed);
 
   return date.toLocaleString("en-IN", {
     timeZone: "Asia/Kolkata",
