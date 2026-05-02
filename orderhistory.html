@@ -549,7 +549,16 @@ function downloadBill(){
 
   doc.save(`Invoice_${currentBillData[0].order_id}.pdf`);
 }
-
+// Extra safety: move button to top layer
+window.addEventListener("load", () => {
+  const btn = document.querySelector(".logout-btn");
+  if(btn){
+    btn.style.position = "fixed";
+    btn.style.top = "20px";
+    btn.style.right = "20px";
+  }
+});
+  
 function logout(){
   localStorage.clear();
   window.location.href = "login.html";
