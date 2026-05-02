@@ -429,10 +429,12 @@ function showBill(orderGroup){
     subtotal += total;
 
     return `
-      <p><b>${item.name}</b> (x${qty}) - ₹${total}</p>
-      <p>Price/unit: ₹${price}</p>
-      <hr>
-    `;
+  <p><b>${item.name}</b></p>
+  <p>Qty: ${qty}</p>
+  <p>Price per unit: ₹${price}</p>
+  <p>Total: ₹${total}</p>
+  <hr>
+`;
   }).join("");
 
   const grandTotal = subtotal + delivery;
