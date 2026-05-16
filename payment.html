@@ -159,18 +159,31 @@ if(!username){ window.location="login.html"; }
 let cartTotal=0, deliveryCharge=0, totalAmount=0;
 
 async function loadCart(){
+
   const res = await fetch(API+"/cart/items?username="+username);
+
   const data = await res.json();
 
   cartTotal = data.cart.overall_total_price || 0;
 
-  deliveryCharge = (cartTotal < 10000 && cartTotal>0) ? 200 : 0;
-  document.getElementById("deliveryInfo").innerText =
-    deliveryCharge ? "Delivery Charge: ₹"+deliveryCharge : "Delivery Free 🎉";
+  // 🔥 ROUND OFF CART TOTAL
+  cartTotal = Math.round(cartTotal);
 
-  totalAmount = cartTotal + deliveryCharge;
+  deliveryCharge =
+    (cartTotal < 10000 && cartTotal > 0)
+      ? 200
+      : 0;
+
+  document.getElementById("deliveryInfo").innerText =
+    deliveryCharge
+      ? "Delivery Charge: ₹"+deliveryCharge
+      : "Delivery Free 🎉";
+
+  // 🔥 ROUND OFF FINAL PAYMENT
+  totalAmount = Math.round(cartTotal + deliveryCharge);
 
   document.getElementById("cartTotal").innerText = cartTotal;
+
   document.getElementById("totalAmount").innerText = totalAmount;
 }
 loadCart();
@@ -197,7 +210,8 @@ async function payNow(){
 
   var options={
     key:"rzp_test_LqWBBDbgwot5lh",
-    amount:totalAmount*100,
+     // 🔥 ROUNDED PAYMENT VALUE
+  amount: Math.round(totalAmount * 100),
     currency:"INR",
     name:"Bongo Basket",
     order_id:order.orderId,
