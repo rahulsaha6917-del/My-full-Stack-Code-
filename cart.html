@@ -264,12 +264,29 @@ function renderCart(products){
 }
 
 /* TOTAL */
+/* TOTAL */
 function calculateTotal(overallTotal){
-  deliveryCharge = overallTotal>0 && overallTotal<10000 ? 200 : 0;
-  const finalTotal = overallTotal + deliveryCharge;
+
+  // Delivery charge logic
+  deliveryCharge = overallTotal > 0 && overallTotal < 10000 ? 200 : 0;
+
+  // Final total
+  let finalTotal = overallTotal + deliveryCharge;
+
+  // 🔥 ROUND OFF FINAL PRICE
+  finalTotal = Math.round(finalTotal);
+
+  // Show delivery text
   document.getElementById("deliveryCharge").innerText =
-    deliveryCharge>0 ? "Delivery Charge: ₹"+deliveryCharge : "Delivery Free";
+    deliveryCharge > 0
+      ? "Delivery Charge: ₹" + deliveryCharge
+      : "Delivery Free";
+
+  // Display rounded total
   document.getElementById("grandTotal").innerText = finalTotal;
+
+  // Save rounded total for payment page
+  localStorage.setItem("finalTotal", finalTotal);
 }
 
 /* UPDATE */
@@ -293,10 +310,24 @@ async function removeItem(productId){
   loadCart();
 }
 
+
 /* CHECKOUT */
 function goPayment(){
-  if(cartProducts.length===0){ alert("Cart is empty!"); return; }
-  localStorage.setItem("deliveryCharge",deliveryCharge);
+
+  if(cartProducts.length===0){
+    alert("Cart is empty!");
+    return;
+  }
+
+  localStorage.setItem("deliveryCharge", deliveryCharge);
+
+  // 🔥 Save rounded grand total
+  const grandTotal = Math.round(
+    parseFloat(document.getElementById("grandTotal").innerText)
+  );
+
+  localStorage.setItem("grandTotal", grandTotal);
+
   window.location.href="payment.html";
 }
 
