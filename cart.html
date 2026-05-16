@@ -196,10 +196,25 @@ body{background:var(--bg); display:flex; height:100vh; overflow:hidden;}
   <div id="cart-container"></div>
 
   <div class="total-box">
-    Grand Total: ₹<span id="grandTotal">0</span>
-    <p id="deliveryCharge"></p>
-    <button class="checkout-btn" onclick="goPayment()">Checkout</button>
-  </div>
+
+  <p>
+    Cart Total:
+    ₹<span id="cartTotal">0</span>
+  </p>
+
+  <p id="deliveryCharge">
+    Delivery Charge: ₹0
+  </p>
+
+  <h3 style="margin-top:10px;">
+    Grand Total:
+    ₹<span id="grandTotal">0</span>
+  </h3>
+
+  <button class="checkout-btn" onclick="goPayment()">
+    Checkout
+  </button>
+
 </div>
 
 <script>
@@ -265,27 +280,37 @@ function renderCart(products){
 
 /* TOTAL */
 /* TOTAL */
+/* TOTAL */
 function calculateTotal(overallTotal){
 
-  // Delivery charge logic
-  deliveryCharge = overallTotal > 0 && overallTotal < 10000 ? 200 : 0;
+  // 🔥 ROUND CART TOTAL
+  const cartTotal = Math.round(overallTotal);
 
-  // Final total
-  let finalTotal = overallTotal + deliveryCharge;
+  // DELIVERY CHARGE
+  deliveryCharge =
+    cartTotal > 0 && cartTotal < 10000
+      ? 200
+      : 0;
 
-  // 🔥 ROUND OFF FINAL PRICE
-  finalTotal = Math.round(finalTotal);
+  // 🔥 FINAL TOTAL
+  const finalTotal =
+    Math.round(cartTotal + deliveryCharge);
 
-  // Show delivery text
+  // 🔥 SHOW CART TOTAL
+  document.getElementById("cartTotal").innerText =
+    cartTotal;
+
+  // 🔥 SHOW DELIVERY
   document.getElementById("deliveryCharge").innerText =
     deliveryCharge > 0
       ? "Delivery Charge: ₹" + deliveryCharge
       : "Delivery Free";
 
-  // Display rounded total
-  document.getElementById("grandTotal").innerText = finalTotal;
+  // 🔥 SHOW GRAND TOTAL
+  document.getElementById("grandTotal").innerText =
+    finalTotal;
 
-  // Save rounded total for payment page
+  // SAVE
   localStorage.setItem("finalTotal", finalTotal);
 }
 
