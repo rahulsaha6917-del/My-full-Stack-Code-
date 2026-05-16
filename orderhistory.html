@@ -369,7 +369,8 @@ window.addEventListener("DOMContentLoaded", () => {
         return sum + (Number(item.price_per_unit) * Number(item.quantity));
       }, 0);
 
-      const grandTotal = subtotal + delivery;
+      // 🔥 ROUND OFF GRAND TOTAL
+      const grandTotal = Math.round(subtotal + delivery);
 
       return `
       <div class="card">
@@ -422,9 +423,11 @@ function showBill(orderGroup){
   let subtotal = 0;
 
   let itemsHTML = orderGroup.map(item => {
-    const price = Number(item.price_per_unit);
+    // 🔥 ROUND PRICE
+    const price = Math.round(Number(item.price_per_unit));
     const qty = Number(item.quantity);
-    const total = price * qty;
+    // 🔥 ROUND TOTAL
+    const total = Math.round(price * qty);
 
     subtotal += total;
 
@@ -437,7 +440,8 @@ function showBill(orderGroup){
 `;
   }).join("");
 
-  const grandTotal = subtotal + delivery;
+  // 🔥 ROUND GRAND TOTAL
+  const grandTotal = Math.round(subtotal + delivery);
 
   let html = `
     <p><b>Order ID:</b> ${orderGroup[0].order_id}</p>
@@ -516,9 +520,11 @@ doc.text(`Date: ${formatDateToIST(currentBillData[0].order_date)}`, 20, y+22);
   doc.setFont("helvetica","normal");
 
   currentBillData.forEach(item => {
-    const price = Number(item.price_per_unit);
+    // 🔥 ROUND PRICE
+    const price = Math.round(Number(item.price_per_unit));
     const qty = Number(item.quantity);
-    const total = price * qty;
+     // 🔥 ROUND TOTAL
+    const total = Math.round(price * qty);
 
     subtotal += total;
 
@@ -535,7 +541,9 @@ doc.text(`Date: ${formatDateToIST(currentBillData[0].order_date)}`, 20, y+22);
   // TOTAL SECTION
   y += 10;
 
-  const grandTotal = subtotal + delivery;
+  // 🔥 ROUND GRAND TOTAL
+  const grandTotal = Math.round(subtotal + delivery);
+
 
   doc.setFont("helvetica","bold");
 
